@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,14 +6,18 @@ using UnityEngine;
 public class Rail : MonoBehaviour
 {
     private IconFabric iconFabric;
-    [Range(0,50)] public int itemSpeed;
+    [Range(0, 50)] public int itemSpeed;
 
     [SerializeField] private Transform endPosition;
     [SerializeField] private Transform spawnPoint;
-
+    [SerializeField] private Transform bottomBorder;
+    [SerializeField] private Transform upperBorder;
     private List<Icon> itemsOnScene = new List<Icon>();
     [Range(0.2f, 2f)] public float countDown;
     public int repit;
+
+    public static event Action RailClear = delegate { };
+
 
     private void Awake()
     {
@@ -20,14 +25,20 @@ public class Rail : MonoBehaviour
     }
     void Start()
     {
-    
         iconFabric = GetComponent<IconFabric>();
-
-        /*StartCoroutine(Spawn(countDown, repit, itemSpeed));*/
-         
     }
 
-    public void SpawnStart (SpawnProperty spawnProperty) 
+    public void ClickAreaSetup(float bottomPos, float upperPos)
+    {
+        Vector3 botPos = bottomBorder.localPosition;
+        botPos.y = bottomPos;
+        bottomBorder.localPosition = botPos;
+
+        upperBorder.localPosition = bottomBorder.localPosition + Vector3.up * upperPos;
+
+    }
+
+    public void SpawnStart(SpawnProperty spawnProperty)
     {
         Debug.Log("Start Spawn");
         StartCoroutine(Spawn(spawnProperty.countDown, spawnProperty.repit, spawnProperty.itemSpeed, spawnProperty.id));
@@ -35,45 +46,84 @@ public class Rail : MonoBehaviour
 
     private IEnumerator Spawn(float countdown, int repit, int speed, List<int> idList)
     {
+        //yield return new WaitForSeconds(0.1f);
+        for (int i = 0; i < repit; i++)
+        {
+            Icon icon = iconFabric.Create(idList[UnityEngine.Random.Range(0, idList.Count)]);
+            icon.transform.position = spawnPoint.position;
+            itemsOnScene.Add(icon);
+            StartCoroutine(IconMove(icon, speed));
+            yield return new WaitForSeconds(countdown);
+        }
+        StartCoroutine(SpawnOver());
+    }
+
+    /*private IEnumerator Spawn(float countdown, int repit, int speed)
+    {
         yield return new WaitForSeconds(1f);
         for (int i = 0; i < repit; i++)
         {
-            Icon icon = iconFabric.Create(idList[Random.Range(0, idList.Count)]);
+            Icon icon = iconFabric.Create(UnityEngine.Random.Range(0, 3));
             icon.transform.position = spawnPoint.position;
             itemsOnScene.Add(icon);
             StartCoroutine(ItemMove(icon, speed));
             yield return new WaitForSeconds(countdown);
 
         }
-    }
+        StartCoroutine(SpawnOver());
+    }*/
 
-    private IEnumerator Spawn(float countdown, int repit, int speed)
+    private IEnumerator SpawnOver()
     {
-       yield return new WaitForSeconds(1f);
-        for (int i = 0; i < repit; i++)
-        {   
-            Icon icon = iconFabric.Create(Random.Range(0,3));
-            icon.transform.position = spawnPoint.position;
-            itemsOnScene.Add(icon);
-            StartCoroutine(ItemMove(icon, speed));
-            yield return new WaitForSeconds(countdown);
-            
+        Debug.Log("SpawnOver check started");
+        while (itemsOnScene.Count != 0)
+        {
+            yield return new WaitForSeconds(0.1f);
         }
+        RailClear();
     }
 
-    private IEnumerator ItemMove(Icon item, int speed)
-    {      
-        while (item.transform.position != endPosition.position)
+    private IEnumerator IconMove(Icon icon, int speed)
+    {
+
+        while (icon != null && icon.transform.position != endPosition.position )
         {
-            item.transform.position = Vector3.MoveTowards(item.transform.position, endPosition.position, speed * Time.deltaTime);
+            icon.transform.position = Vector3.MoveTowards(icon.transform.position, endPosition.position, speed * Time.deltaTime);
             yield return new WaitForSeconds(Time.deltaTime);
         }
-        if (item != null)
+        if (icon != null)
         {
-            itemsOnScene.Remove(item);
-            Destroy(item.gameObject);
+            itemsOnScene.Remove(icon);
+            Destroy(icon.gameObject);
         }
-        
     }
 
+    public int AreaCheck()
+    {
+        Icon targetIcon = itemsOnScene.Find(op => op.transform.localPosition.y > bottomBorder.localPosition.y && op.transform.localPosition.y < upperBorder.localPosition.y);
+        if (targetIcon != null)
+        {
+            int i;
+            switch (targetIcon.iconClass)
+            {
+                case IconClass.Sword:
+                    i = 0;
+                    break;
+                case IconClass.Shield:
+                    i = 1;
+                    break;
+                case IconClass.Arrow:
+                    i = 2;
+                    break;
+                default:
+                    i = 3;
+                    break;
+            }
+            itemsOnScene.Remove(targetIcon);
+            Destroy(targetIcon.gameObject);
+            return i;
+        }
+        else return 3;
+
+    }
 }
