@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RytmGameService : MonoBehaviour
 {
@@ -10,17 +11,38 @@ public class RytmGameService : MonoBehaviour
     [SerializeField, Range(0, 13)] private float bottomBorder;
     [SerializeField, Range(1, 13)] private float areaRange;
 
+    [SerializeField] private Slider playerHP;
+    [SerializeField] private Slider enemyHP;
+
     Rail railScript;
-    //IconFabric iconFabric;
+    Compare compareScript;
+
+    public int playerMaxHP;
+    public int enemyMaxHP;
+     
     private int wave = 0;
 
     void Start()
     {
+
         railPrefab = Instantiate(railPrefab, Vector3.up * -3, Quaternion.identity);
         railScript = railPrefab.GetComponent<Rail>();
         railScript.ClickAreaSetup(bottomBorder, areaRange);
-        Rail.RailClear += NextWave;
 
+        playerHP.maxValue = playerMaxHP;
+        playerHP.value = playerMaxHP;
+        enemyHP.maxValue = enemyMaxHP;
+        enemyHP.value = enemyMaxHP;
+
+        compareScript = GetComponent<Compare>();
+
+        Rail.RailClear += NextWave;
+        Compare.EnemyDamage += ChangeEnemyHP;
+        Compare.PlayerDamage += ChangePlayerHP;
+        Compare.NoneDamage += DrawSituation;
+
+
+ 
         if (spawnProperties.Count > 0)
         {
             railScript.SpawnStart(spawnProperties[wave]);
@@ -45,22 +67,62 @@ public class RytmGameService : MonoBehaviour
         Rail.RailClear -= NextWave;
     }
 
-    public void ButtonPressed(int playerButtonEnum)
+    public void ButtonPressed(int playerChoise)
     {
         switch (railScript.AreaCheck())
         {
             case 0:
-                Debug.Log("Sword");
+                compareScript.EnemyIconSword(playerChoise);
+                //Debug.Log("Sword");
                 break;
             case 1:
-                Debug.Log("Schield");
+                compareScript.EnemyIconSchield(playerChoise);
+                //Debug.Log("Schield");
                 break;
             case 2:
-                Debug.Log("Arrow");
+                compareScript.EnemyIconArrow(playerChoise);
+                //Debug.Log("Arrow");
                 break;
             default:
-                Debug.Log("No icons in area");
+                ChangePlayerHP(-1);
+                Debug.Log("Not in Area");
                 break;
         }
     }
+
+    public void ChangePlayerHP(int change)
+    {
+        playerHP.value +=  change;
+        if (playerHP.value <= 0)
+        {
+            LoseGame();
+        }
+    }
+
+    public void ChangeEnemyHP(int change)
+    {
+        enemyHP.value += change;
+        if (enemyHP.value <= 0)
+        {
+            WinGame();
+        }
+    }
+
+    public void DrawSituation(int change)
+    {
+        Debug.Log("DRAW!");
+    }
+
+    public void WinGame()
+    {
+        Debug.Log("Player Win!");
+    }
+
+    public void LoseGame()
+    {
+        Debug.Log("Enemy Win!");
+    }
+
+
+
 }
