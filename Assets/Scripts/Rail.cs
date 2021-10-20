@@ -17,7 +17,7 @@ public class Rail : MonoBehaviour
     public int repit;
 
     public static event Action RailClear = delegate { };
-
+    public static event Action IconReachBottom = delegate { }; 
 
     private void Awake()
     {
@@ -75,7 +75,7 @@ public class Rail : MonoBehaviour
 
     private IEnumerator SpawnOver()
     {
-        Debug.Log("SpawnOver check started");
+        //Debug.Log("SpawnOver check started");
         while (itemsOnScene.Count != 0)
         {
             yield return new WaitForSeconds(0.1f);
@@ -93,6 +93,7 @@ public class Rail : MonoBehaviour
         }
         if (icon != null)
         {
+            IconReachBottom();
             itemsOnScene.Remove(icon);
             Destroy(icon.gameObject);
         }

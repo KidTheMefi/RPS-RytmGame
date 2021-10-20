@@ -36,6 +36,7 @@ public class RytmGameService : MonoBehaviour
 
         compareScript = GetComponent<Compare>();
 
+        Rail.IconReachBottom += IconReachBottom;
         Rail.RailClear += NextWave;
         Compare.EnemyDamage += ChangeEnemyHP;
         Compare.PlayerDamage += ChangePlayerHP;
@@ -65,6 +66,12 @@ public class RytmGameService : MonoBehaviour
     private void OnDestroy()
     {
         Rail.RailClear -= NextWave;
+        Rail.IconReachBottom -= IconReachBottom;
+    }
+
+    private void IconReachBottom()
+    {
+        ChangePlayerHP(-1);
     }
 
     public void ButtonPressed(int playerChoise)
