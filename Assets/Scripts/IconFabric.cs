@@ -4,14 +4,19 @@ using UnityEngine;
 
 public class IconFabric : MonoBehaviour
 {
-    public List<Icon> itemsPull;
+    public List<Icon> iconPull;
 
-    public Icon Create(int id)
+
+    
+
+    public Icon Create(IconSpawnIdClass idClass) 
     {
-      
-            return Instantiate(itemsPull.Find(op => op.id == id), gameObject.transform);
-       // else Debug.LogWarning("No objects in IconFabric!");
-       // return null;
+        if (iconPull.Count != 0)
+        {
+            return Instantiate(iconPull.Find(op => op.iconSpawnClass == idClass), gameObject.transform);
+        }
+        else Debug.LogWarning("No objects in IconFabric!");
+        return null;
     }
 
 }

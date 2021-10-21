@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Compare : MonoBehaviour
 {
-    IconClass playerIcon;
+    IconBaseClass playerIcon;
 
     public delegate void Damage(int damage); 
 
@@ -25,7 +25,7 @@ public class Compare : MonoBehaviour
     {
         if (playerI >= 0 && playerI < 3)
         {
-            playerIcon = (IconClass)playerI;
+            playerIcon = (IconBaseClass)playerI;
             return true;
         }
         else
@@ -33,7 +33,6 @@ public class Compare : MonoBehaviour
             Debug.LogWarning("Wrong input in CompareMethod!");
             return false;
         }
-
     }
 
     public void EnemyIconSword(int playerI)
@@ -42,13 +41,13 @@ public class Compare : MonoBehaviour
         {
             switch (playerIcon)
             {
-                case IconClass.Sword:
+                case IconBaseClass.Sword:
                     NoneDamage(0);
                     break;
-                case IconClass.Shield:
+                case IconBaseClass.Shield:
                     PlayerDamage(-enemySwordAttack);
                     break;
-                case IconClass.Arrow:
+                case IconBaseClass.Arrow:
                     EnemyDamage(-playerArrowAttack);
                     break;
             }
@@ -61,13 +60,13 @@ public class Compare : MonoBehaviour
         {
             switch (playerIcon)
             {
-                case IconClass.Sword:
+                case IconBaseClass.Sword:
                     EnemyDamage(-playerSwordAttack);
                     break;
-                case IconClass.Shield:                
+                case IconBaseClass.Shield:                
                     NoneDamage(0);
                     break;
-                case IconClass.Arrow:
+                case IconBaseClass.Arrow:
                     PlayerDamage(-enemyShieldAttack);
                     break;
             }
@@ -80,13 +79,13 @@ public class Compare : MonoBehaviour
         {
             switch (playerIcon)
             {
-                case IconClass.Sword:
+                case IconBaseClass.Sword:
                     PlayerDamage(-enemyArrowAttack);
                     break;
-                case IconClass.Shield:
+                case IconBaseClass.Shield:
                     EnemyDamage(-playerShieldAttack);
                     break;
-                case IconClass.Arrow:
+                case IconBaseClass.Arrow:
                     NoneDamage(0);                
                     break;
             }

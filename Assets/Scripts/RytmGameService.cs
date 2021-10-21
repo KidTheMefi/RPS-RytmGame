@@ -8,9 +8,11 @@ public class RytmGameService : MonoBehaviour
     [SerializeField] private GameObject railPrefab;
     public List<SpawnProperty> spawnProperties = new List<SpawnProperty>();
 
+    public List<Enemy> enemyList = new List<Enemy>();
+    
     [SerializeField, Range(0, 13)] private float bottomBorder;
     [SerializeField, Range(1, 13)] private float areaRange;
-
+    [SerializeField] private Canvas gameCanvas;
     [SerializeField] private Slider playerHP;
     [SerializeField] private Slider enemyHP;
 
@@ -24,7 +26,9 @@ public class RytmGameService : MonoBehaviour
 
     void Start()
     {
-
+        spawnProperties = enemyList[0].spawnProperties;
+        enemyHP = Instantiate(enemyHP, gameCanvas.transform);
+        playerHP = Instantiate(playerHP, gameCanvas.transform);
         railPrefab = Instantiate(railPrefab, Vector3.up * -3, Quaternion.identity);
         railScript = railPrefab.GetComponent<Rail>();
         railScript.ClickAreaSetup(bottomBorder, areaRange);
@@ -34,22 +38,22 @@ public class RytmGameService : MonoBehaviour
         enemyHP.maxValue = enemyMaxHP;
         enemyHP.value = enemyMaxHP;
 
-        compareScript = GetComponent<Compare>();
 
         Rail.IconReachBottom += IconReachBottom;
         Rail.RailClear += NextWave;
-        Compare.EnemyDamage += ChangeEnemyHP;
-        Compare.PlayerDamage += ChangePlayerHP;
-        Compare.NoneDamage += DrawSituation;
+        Rail.ResultsChecked += ResultsApply;
 
+        StartCoroutine(StartGame());
+    }
 
- 
+    private IEnumerator StartGame()
+    {
+        yield return new WaitForSeconds(1f);
         if (spawnProperties.Count > 0)
         {
             railScript.SpawnStart(spawnProperties[wave]);
         }
         else Debug.LogWarning("No spawnProperties in the List");
-
     }
 
     public void NextWave()
@@ -76,26 +80,36 @@ public class RytmGameService : MonoBehaviour
 
     public void ButtonPressed(int playerChoise)
     {
-        switch (railScript.AreaCheck())
+        IconBaseClass playerIcon;
+        if (playerChoise >= 0 && playerChoise < 3)
         {
-            case 0:
-                compareScript.EnemyIconSword(playerChoise);
-                //Debug.Log("Sword");
+            playerIcon = (IconBaseClass)playerChoise;
+            railScript.AreaCheck(playerIcon);
+        }
+        else
+        {
+            Debug.LogWarning("Wrong input in CompareMethod!");
+        } 
+    }
+
+
+
+    public void ResultsApply(CompareResult compareResult)
+    {
+        switch (compareResult)
+        {
+            case CompareResult.Win:
+                ChangeEnemyHP(-1);
                 break;
-            case 1:
-                compareScript.EnemyIconSchield(playerChoise);
-                //Debug.Log("Schield");
-                break;
-            case 2:
-                compareScript.EnemyIconArrow(playerChoise);
-                //Debug.Log("Arrow");
-                break;
-            default:
+            case CompareResult.Lose:
                 ChangePlayerHP(-1);
-                Debug.Log("Not in Area");
+                break;
+            case CompareResult.Draw:
+                DrawSituation();
                 break;
         }
     }
+
 
     public void ChangePlayerHP(int change)
     {
@@ -115,7 +129,7 @@ public class RytmGameService : MonoBehaviour
         }
     }
 
-    public void DrawSituation(int change)
+    public void DrawSituation()
     {
         Debug.Log("DRAW!");
     }
@@ -129,7 +143,5 @@ public class RytmGameService : MonoBehaviour
     {
         Debug.Log("Enemy Win!");
     }
-
-
 
 }
