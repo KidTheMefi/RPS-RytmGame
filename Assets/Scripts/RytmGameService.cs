@@ -10,38 +10,70 @@ public class RytmGameService : MonoBehaviour
 
     public List<Enemy> enemyList = new List<Enemy>();
     
-    [SerializeField, Range(0, 13)] private float bottomBorder;
-    [SerializeField, Range(1, 13)] private float areaRange;
+    //[SerializeField, Range(0, 13)] private float bottomBorder;
+    //[SerializeField, Range(1, 13)] private float areaRange;
     [SerializeField] private Canvas gameCanvas;
     [SerializeField] private Slider playerHP;
     [SerializeField] private Slider enemyHP;
 
     Rail railScript;
-    Compare compareScript;
 
     public int playerMaxHP;
-    public int enemyMaxHP;
+    private int curentLvl;
      
     private int wave = 0;
 
     void Start()
-    {
-        spawnProperties = enemyList[0].spawnProperties;
-        enemyHP = Instantiate(enemyHP, gameCanvas.transform);
-        playerHP = Instantiate(playerHP, gameCanvas.transform);
+    {     
         railPrefab = Instantiate(railPrefab, Vector3.up * -3, Quaternion.identity);
         railScript = railPrefab.GetComponent<Rail>();
-        railScript.ClickAreaSetup(bottomBorder, areaRange);
 
-        playerHP.maxValue = playerMaxHP;
-        playerHP.value = playerMaxHP;
-        enemyHP.maxValue = enemyMaxHP;
-        enemyHP.value = enemyMaxHP;
-
+        enemyHP = Instantiate(enemyHP, gameCanvas.transform);
+        playerHP = Instantiate(playerHP, gameCanvas.transform);
 
         Rail.IconReachBottom += IconReachBottom;
         Rail.RailClear += NextWave;
         Rail.ResultsChecked += ResultsApply;
+        Rail.NoIconInArea += WrongTiming;
+    }
+
+    //public void SetLvl(int lvl)
+
+    public void StartLevel(int lvl)
+    {
+        railScript.StopAndClearRail();
+
+        if (lvl >= enemyList.Count)
+        {
+            Debug.LogWarning("Wrong start Lvl int!");
+            return;
+        }
+        
+            curentLvl = lvl;
+            spawnProperties = enemyList[curentLvl].spawnProperties;
+
+            railScript.ClickAreaSetup(enemyList[curentLvl].bottomBorder, enemyList[curentLvl].areaRange);
+
+            playerHP.maxValue = playerMaxHP;
+            playerHP.value = playerMaxHP;
+            enemyHP.maxValue = enemyList[curentLvl].HP;
+            enemyHP.value = enemyHP.maxValue;
+
+            StartCoroutine(StartGame());
+        
+    }
+
+    public void NextLevel()
+    {
+            StartLevel(curentLvl + 1);  
+    }
+
+    public void RestartLevel()
+    {
+        railScript.StopAndClearRail();
+        playerHP.value = playerMaxHP;
+        enemyHP.value = enemyHP.maxValue;
+        wave = 0;
 
         StartCoroutine(StartGame());
     }
@@ -56,7 +88,7 @@ public class RytmGameService : MonoBehaviour
         else Debug.LogWarning("No spawnProperties in the List");
     }
 
-    public void NextWave()
+    private void NextWave()
     {
         wave++;
         if (wave >= spawnProperties.Count)
@@ -93,8 +125,12 @@ public class RytmGameService : MonoBehaviour
     }
 
 
+    private void WrongTiming()
+    {
+        ChangePlayerHP(-1);
+    }
 
-    public void ResultsApply(CompareResult compareResult)
+    private void ResultsApply(CompareResult compareResult)
     {
         switch (compareResult)
         {
@@ -111,7 +147,7 @@ public class RytmGameService : MonoBehaviour
     }
 
 
-    public void ChangePlayerHP(int change)
+    private void ChangePlayerHP(int change)
     {
         playerHP.value +=  change;
         if (playerHP.value <= 0)
@@ -120,7 +156,7 @@ public class RytmGameService : MonoBehaviour
         }
     }
 
-    public void ChangeEnemyHP(int change)
+    private void ChangeEnemyHP(int change)
     {
         enemyHP.value += change;
         if (enemyHP.value <= 0)
@@ -129,17 +165,17 @@ public class RytmGameService : MonoBehaviour
         }
     }
 
-    public void DrawSituation()
+    private void DrawSituation()
     {
-        Debug.Log("DRAW!");
     }
 
-    public void WinGame()
+    private void WinGame()
     {
+        NextLevel();
         Debug.Log("Player Win!");
     }
 
-    public void LoseGame()
+    private void LoseGame()
     {
         Debug.Log("Enemy Win!");
     }

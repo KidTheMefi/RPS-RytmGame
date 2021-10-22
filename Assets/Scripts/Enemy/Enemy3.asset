@@ -10,7 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62cffce5e325b224eba9a2ff8dc9a47a, type: 3}
-  m_Name: Enemy1
+  m_Name: Enemy3
   m_EditorClassIdentifier: 
-  HP: 0
-  spawnProperties: []
+  enemyName: default name
+  HP: 10
+  bottomBorder: 0
+  areaRange: 4
+  spawnProperties:
+  - itemSpeed: 10
+    countDown: 0.5
+    idClass: 060000000700000008000000
+    repit: 10

@@ -16,6 +16,7 @@ public class Rail : MonoBehaviour
 
     public static event Action RailClear = delegate { };
     public static event Action IconReachBottom = delegate { };
+    public static event Action NoIconInArea = delegate { }; 
 
     public delegate void ResultsHandler(CompareResult result);
     public static event ResultsHandler ResultsChecked; 
@@ -76,8 +77,7 @@ public class Rail : MonoBehaviour
 
         while (icon != null && icon.transform.position != endPosition.position )
         {
-            icon.transform.position = Vector3.MoveTowards(icon.transform.position, endPosition.position, speed * Time.deltaTime);
-            Debug.Log($"{icon.ToString()} {Time.deltaTime}");
+            icon.transform.position = Vector3.MoveTowards(icon.transform.position, endPosition.position, speed * Time.deltaTime);        
             yield return new WaitForSeconds(Time.deltaTime);
         }
         if (icon != null)
@@ -97,6 +97,22 @@ public class Rail : MonoBehaviour
             ResultsChecked(targetIcon.Compare(playerIcon));
             iconsOnScene.Remove(targetIcon);
             Destroy(targetIcon.gameObject);         
+        }
+        else
+        {
+            NoIconInArea();
+        }
+    }
+
+    public void StopAndClearRail() 
+    {
+        StopAllCoroutines();
+        
+        while (iconsOnScene.Count != 0)
+        {
+            Icon targetIcon = iconsOnScene[0];
+            iconsOnScene.Remove(targetIcon);
+            Destroy(targetIcon.gameObject);
         }
     }
 }
