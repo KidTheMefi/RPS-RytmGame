@@ -14,7 +14,7 @@ public class Rail : MonoBehaviour
     private List<Icon> iconsOnScene = new List<Icon>();
 
 
-    public static event Action RailClear = delegate { };
+    public static event Action RailIsClear = delegate { };
     public static event Action IconReachBottom = delegate { };
     public static event Action NoIconInArea = delegate { }; 
 
@@ -43,24 +43,26 @@ public class Rail : MonoBehaviour
     public void SpawnStart(SpawnProperty spawnProperty)
     {
         Debug.Log("Start Spawn");
-        StartCoroutine(Spawn(spawnProperty.countDown, spawnProperty.repit, spawnProperty.itemSpeed, spawnProperty.idClass));
+        StartCoroutine(Spawn(spawnProperty));
     }
 
-    private IEnumerator Spawn(float countdown, int repit, int speed, List<IconSpawnIdClass> idClassList)
+
+
+
+
+    private IEnumerator Spawn(SpawnProperty Spawn)
     {
-        for (int i = 0; i < repit; i++)
+        for (int i = 0; i < Spawn.repit; i++)
         {
-            Icon icon = iconFabric.Create(idClassList[UnityEngine.Random.Range(0, idClassList.Count)]);
+            Icon icon = iconFabric.Create(Spawn.idClass[UnityEngine.Random.Range(0, Spawn.idClass.Count)]);
             icon.transform.position = spawnPoint.position;
             iconsOnScene.Add(icon);
             yield return new WaitForEndOfFrame();
-            StartCoroutine(IconMove(icon, speed));
-            yield return new WaitForSeconds(countdown);
+            StartCoroutine(IconMove(icon, Spawn.itemSpeed));
+            yield return new WaitForSeconds(Spawn.countDown);
         }
         StartCoroutine(SpawnOver());
     }
-
-
 
     private IEnumerator SpawnOver()
     {
@@ -69,7 +71,7 @@ public class Rail : MonoBehaviour
         {
             yield return new WaitForSeconds(0.1f);
         }
-        RailClear();
+        RailIsClear();
     }
 
     private IEnumerator IconMove(Icon icon, int speed)

@@ -6,10 +6,12 @@ using UnityEngine.UI;
 public class RytmGameService : MonoBehaviour
 {
     [SerializeField] private GameObject railPrefab;
-    public List<SpawnProperty> spawnProperties = new List<SpawnProperty>();
+    public List<SpawnProperty> enemySpawnProperties = new List<SpawnProperty>();
 
-    public List<Enemy> enemyList = new List<Enemy>();
-    
+    [SerializeField] private List<Enemy> enemyList;
+
+    [SerializeField] private EnemiesList enemies;
+
     //[SerializeField, Range(0, 13)] private float bottomBorder;
     //[SerializeField, Range(1, 13)] private float areaRange;
     [SerializeField] private Canvas gameCanvas;
@@ -20,21 +22,26 @@ public class RytmGameService : MonoBehaviour
 
     public int playerMaxHP;
     private int curentLvl;
-     
+
     private int wave = 0;
 
+
     void Start()
-    {     
-        railPrefab = Instantiate(railPrefab, Vector3.up * -3, Quaternion.identity);
+    {
+        //PlayerPrefs.SetInt("LevelUnlocked", 0);  
+        railPrefab = Instantiate(railPrefab, Vector3.up * -4, Quaternion.identity);
         railScript = railPrefab.GetComponent<Rail>();
 
         enemyHP = Instantiate(enemyHP, gameCanvas.transform);
         playerHP = Instantiate(playerHP, gameCanvas.transform);
 
+        enemyList = enemies.enemyList;
+
         Rail.IconReachBottom += IconReachBottom;
-        Rail.RailClear += NextWave;
+        Rail.RailIsClear += NextWave;
         Rail.ResultsChecked += ResultsApply;
         Rail.NoIconInArea += WrongTiming;
+        LevelPropertiesDisplay.LevelSelected += StartLevel;
     }
 
     //public void SetLvl(int lvl)
@@ -48,42 +55,45 @@ public class RytmGameService : MonoBehaviour
             Debug.LogWarning("Wrong start Lvl int!");
             return;
         }
-        
-            curentLvl = lvl;
-            spawnProperties = enemyList[curentLvl].spawnProperties;
 
-            railScript.ClickAreaSetup(enemyList[curentLvl].bottomBorder, enemyList[curentLvl].areaRange);
+        curentLvl = lvl;
+        enemySpawnProperties = enemyList[curentLvl].spawnProperties;
 
-            playerHP.maxValue = playerMaxHP;
-            playerHP.value = playerMaxHP;
-            enemyHP.maxValue = enemyList[curentLvl].HP;
-            enemyHP.value = enemyHP.maxValue;
+        railScript.ClickAreaSetup(enemyList[curentLvl].bottomBorder, enemyList[curentLvl].areaRange);
 
-            StartCoroutine(StartGame());
-        
+        playerHP.maxValue = playerMaxHP;
+        playerHP.value = playerMaxHP;
+        enemyHP.maxValue = enemyList[curentLvl].HP;
+        enemyHP.value = enemyHP.maxValue;
+
+        StopAllCoroutines();
+        StartCoroutine(StartGame());
+
     }
 
     public void NextLevel()
     {
-            StartLevel(curentLvl + 1);  
+        StartLevel(curentLvl + 1);
     }
 
     public void RestartLevel()
     {
+
         railScript.StopAndClearRail();
         playerHP.value = playerMaxHP;
         enemyHP.value = enemyHP.maxValue;
         wave = 0;
 
+        StopAllCoroutines();
         StartCoroutine(StartGame());
     }
 
     private IEnumerator StartGame()
     {
         yield return new WaitForSeconds(1f);
-        if (spawnProperties.Count > 0)
+        if (enemySpawnProperties.Count > 0)
         {
-            railScript.SpawnStart(spawnProperties[wave]);
+            railScript.SpawnStart(enemySpawnProperties[wave]);
         }
         else Debug.LogWarning("No spawnProperties in the List");
     }
@@ -91,17 +101,17 @@ public class RytmGameService : MonoBehaviour
     private void NextWave()
     {
         wave++;
-        if (wave >= spawnProperties.Count)
+        if (wave >= enemySpawnProperties.Count)
         {
             wave = 0;
         }
         Debug.Log("Next wave " + wave);
-        railScript.SpawnStart(spawnProperties[wave]);
+        railScript.SpawnStart(enemySpawnProperties[wave]);
     }
 
     private void OnDestroy()
     {
-        Rail.RailClear -= NextWave;
+        Rail.RailIsClear -= NextWave;
         Rail.IconReachBottom -= IconReachBottom;
     }
 
@@ -121,7 +131,7 @@ public class RytmGameService : MonoBehaviour
         else
         {
             Debug.LogWarning("Wrong input in CompareMethod!");
-        } 
+        }
     }
 
 
@@ -149,7 +159,7 @@ public class RytmGameService : MonoBehaviour
 
     private void ChangePlayerHP(int change)
     {
-        playerHP.value +=  change;
+        playerHP.value += change;
         if (playerHP.value <= 0)
         {
             LoseGame();
@@ -171,6 +181,11 @@ public class RytmGameService : MonoBehaviour
 
     private void WinGame()
     {
+        if (PlayerPrefs.GetInt("LevelUnlocked", 0) < curentLvl + 1)
+        {
+            PlayerPrefs.SetInt("LevelUnlocked", curentLvl + 1);
+            PlayerPrefs.Save();
+        }
         NextLevel();
         Debug.Log("Player Win!");
     }

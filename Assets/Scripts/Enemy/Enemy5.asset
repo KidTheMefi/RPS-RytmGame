@@ -10,14 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62cffce5e325b224eba9a2ff8dc9a47a, type: 3}
-  m_Name: Enemy4
+  m_Name: Enemy5
   m_EditorClassIdentifier: 
-  enemyName: Level 4 Enemy
-  HP: 5
-  bottomBorder: 1
-  areaRange: 3
+  enemyName: Level 5 Enemy
+  HP: 25
+  bottomBorder: 0
+  areaRange: 4
   spawnProperties:
-  - itemSpeed: 40
+  - itemSpeed: 15
+    countDown: 0.75
+    idClass: 000000000100000002000000
+    repit: 5
+  - itemSpeed: 20
     countDown: 0.75
     idClass: 090000000a0000000b000000
-    repit: 10
+    repit: 5
+  - itemSpeed: 15
+    countDown: 0.75
+    idClass: 030000000400000005000000
+    repit: 5
