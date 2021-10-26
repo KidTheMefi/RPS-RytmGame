@@ -14,10 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Level 2 Enemy
   HP: 6
+  hasGeneralSpeed: 1
+  generalSpeed: 20
   bottomBorder: 0
   areaRange: 4
   spawnProperties:
   - itemSpeed: 20
-    countDown: 0.75
+    countDown: 1
     idClass: 030000000400000005000000
-    repit: 10
+    repit: 3

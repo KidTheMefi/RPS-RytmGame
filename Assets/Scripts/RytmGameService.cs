@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,23 +13,22 @@ public class RytmGameService : MonoBehaviour
 
     [SerializeField] private EnemiesList enemies;
 
-    //[SerializeField, Range(0, 13)] private float bottomBorder;
-    //[SerializeField, Range(1, 13)] private float areaRange;
     [SerializeField] private Canvas gameCanvas;
     [SerializeField] private Slider playerHP;
     [SerializeField] private Slider enemyHP;
 
+    [SerializeField] private LevelPropertiesDisplay levelPropertiesDisplay;
     Rail railScript;
+
+    public delegate void LevelEnded();
+    public event LevelEnded PlayerWin;
+    public event LevelEnded PlayerLose;
 
     public int playerMaxHP;
     private int curentLvl;
-
-    private int wave = 0;
-
-
+    
     void Start()
-    {
-        //PlayerPrefs.SetInt("LevelUnlocked", 0);  
+    {   
         railPrefab = Instantiate(railPrefab, Vector3.up * -4, Quaternion.identity);
         railScript = railPrefab.GetComponent<Rail>();
 
@@ -37,14 +37,13 @@ public class RytmGameService : MonoBehaviour
 
         enemyList = enemies.enemyList;
 
-        Rail.IconReachBottom += IconReachBottom;
-        Rail.RailIsClear += NextWave;
-        Rail.ResultsChecked += ResultsApply;
-        Rail.NoIconInArea += WrongTiming;
-        LevelPropertiesDisplay.LevelSelected += StartLevel;
+        railScript.IconReachBottom += IconReachBottom;
+        railScript.ResultsChecked += ResultsApply;
+        railScript.NoIconInArea += WrongTiming;
+
+        levelPropertiesDisplay.LevelSelected += StartLevel;
     }
 
-    //public void SetLvl(int lvl)
 
     public void StartLevel(int lvl)
     {
@@ -82,7 +81,6 @@ public class RytmGameService : MonoBehaviour
         railScript.StopAndClearRail();
         playerHP.value = playerMaxHP;
         enemyHP.value = enemyHP.maxValue;
-        wave = 0;
 
         StopAllCoroutines();
         StartCoroutine(StartGame());
@@ -90,29 +88,22 @@ public class RytmGameService : MonoBehaviour
 
     private IEnumerator StartGame()
     {
-        yield return new WaitForSeconds(1f);
-        if (enemySpawnProperties.Count > 0)
+        yield return new WaitForSeconds(0.1f);
+        if (enemyList.Count > 0)
         {
-            railScript.SpawnStart(enemySpawnProperties[wave]);
+            railScript.LevelStart(enemyList[curentLvl]);
         }
-        else Debug.LogWarning("No spawnProperties in the List");
+        else Debug.LogWarning("No enemy in the List");
     }
 
-    private void NextWave()
-    {
-        wave++;
-        if (wave >= enemySpawnProperties.Count)
-        {
-            wave = 0;
-        }
-        Debug.Log("Next wave " + wave);
-        railScript.SpawnStart(enemySpawnProperties[wave]);
-    }
 
     private void OnDestroy()
     {
-        Rail.RailIsClear -= NextWave;
-        Rail.IconReachBottom -= IconReachBottom;
+        railScript.IconReachBottom -= IconReachBottom;
+        railScript.ResultsChecked -= ResultsApply;
+        railScript.NoIconInArea -= WrongTiming;
+
+        levelPropertiesDisplay.LevelSelected -= StartLevel;
     }
 
     private void IconReachBottom()
@@ -186,12 +177,13 @@ public class RytmGameService : MonoBehaviour
             PlayerPrefs.SetInt("LevelUnlocked", curentLvl + 1);
             PlayerPrefs.Save();
         }
-        NextLevel();
+        PlayerWin();
         Debug.Log("Player Win!");
     }
 
     private void LoseGame()
     {
+        PlayerLose();
         Debug.Log("Enemy Win!");
     }
 

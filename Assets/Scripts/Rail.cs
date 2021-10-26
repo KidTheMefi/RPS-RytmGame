@@ -13,13 +13,16 @@ public class Rail : MonoBehaviour
     [SerializeField] private Transform upperBorder;
     private List<Icon> iconsOnScene = new List<Icon>();
 
+    private List<SpawnProperty> enemySpawnProperties;
+    private Enemy currentEnemy;
+    private int wave;
 
-    public static event Action RailIsClear = delegate { };
-    public static event Action IconReachBottom = delegate { };
-    public static event Action NoIconInArea = delegate { }; 
+    public event Action IconReachBottom = delegate { };
+    public event Action NoIconInArea = delegate { };
+    public event Action<CompareResult> ResultsChecked = delegate { };
 
-    public delegate void ResultsHandler(CompareResult result);
-    public static event ResultsHandler ResultsChecked; 
+
+   
 
     private void Awake()
     {
@@ -28,6 +31,7 @@ public class Rail : MonoBehaviour
     void Start()
     {
         iconFabric = GetComponent<IconFabric>();
+
     }
 
     public void ClickAreaSetup(float bottomPos, float upperPos)
@@ -40,13 +44,26 @@ public class Rail : MonoBehaviour
 
     }
 
-    public void SpawnStart(SpawnProperty spawnProperty)
+    public void LevelStart(Enemy enemy)
     {
+        currentEnemy = enemy;
+        enemySpawnProperties = currentEnemy.spawnProperties;
+        wave = 0;
+
         Debug.Log("Start Spawn");
-        StartCoroutine(Spawn(spawnProperty));
+        StartCoroutine(Spawn(enemySpawnProperties[wave]));
     }
 
-
+    private void NextWave()
+    {
+        wave++;
+        if (wave >= enemySpawnProperties.Count)
+        {
+            wave = 0;
+        }
+        Debug.Log("Next wave " + wave);
+        StartCoroutine(Spawn(enemySpawnProperties[wave]));
+    }
 
 
 
@@ -58,10 +75,27 @@ public class Rail : MonoBehaviour
             icon.transform.position = spawnPoint.position;
             iconsOnScene.Add(icon);
             yield return new WaitForEndOfFrame();
-            StartCoroutine(IconMove(icon, Spawn.itemSpeed));
+
+            if (currentEnemy.hasGeneralSpeed == true)
+            {
+                StartCoroutine(IconMove(icon, currentEnemy.generalSpeed));
+            }
+            else
+            {
+                StartCoroutine(IconMove(icon, Spawn.itemSpeed));
+            }
             yield return new WaitForSeconds(Spawn.countDown);
         }
-        StartCoroutine(SpawnOver());
+
+        if (currentEnemy.hasGeneralSpeed == true)
+        {
+            NextWave();
+        }
+        else
+        {
+            StartCoroutine(SpawnOver());
+        }
+
     }
 
     private IEnumerator SpawnOver()
@@ -71,15 +105,15 @@ public class Rail : MonoBehaviour
         {
             yield return new WaitForSeconds(0.1f);
         }
-        RailIsClear();
+        NextWave();
     }
 
     private IEnumerator IconMove(Icon icon, int speed)
     {
 
-        while (icon != null && icon.transform.position != endPosition.position )
+        while (icon != null && icon.transform.position != endPosition.position)
         {
-            icon.transform.position = Vector3.MoveTowards(icon.transform.position, endPosition.position, speed * Time.deltaTime);        
+            icon.transform.position = Vector3.MoveTowards(icon.transform.position, endPosition.position, speed * Time.deltaTime);
             yield return new WaitForSeconds(Time.deltaTime);
         }
         if (icon != null)
@@ -98,7 +132,7 @@ public class Rail : MonoBehaviour
 
             ResultsChecked(targetIcon.Compare(playerIcon));
             iconsOnScene.Remove(targetIcon);
-            Destroy(targetIcon.gameObject);         
+            Destroy(targetIcon.gameObject);
         }
         else
         {
@@ -106,10 +140,10 @@ public class Rail : MonoBehaviour
         }
     }
 
-    public void StopAndClearRail() 
+    public void StopAndClearRail()
     {
         StopAllCoroutines();
-        
+
         while (iconsOnScene.Count != 0)
         {
             Icon targetIcon = iconsOnScene[0];

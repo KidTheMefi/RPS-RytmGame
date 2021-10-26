@@ -18,7 +18,7 @@ public class LevelPropertiesDisplay : MonoBehaviour
     [SerializeField] private List<Button> levelButtons;
 
     public delegate void LevelSelect(int level);
-    public static event LevelSelect LevelSelected;
+    public event LevelSelect LevelSelected;
 
     private int selectedLevel;
 
