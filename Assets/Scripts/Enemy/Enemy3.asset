@@ -12,8 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62cffce5e325b224eba9a2ff8dc9a47a, type: 3}
   m_Name: Enemy3
   m_EditorClassIdentifier: 
-  enemyName: Level 3 Enemy
-  HP: 7
+  enemyName: Enemy 3
+  HP: 5
+  hasGeneralSpeed: 1
+  generalSpeed: 10
   bottomBorder: 0
   areaRange: 4
   spawnProperties:

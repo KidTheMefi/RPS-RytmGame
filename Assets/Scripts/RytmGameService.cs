@@ -11,15 +11,18 @@ public class RytmGameService : MonoBehaviour
 
     [SerializeField] private List<Enemy> enemyList;
 
-    [SerializeField] private EnemiesList enemies;
+    [SerializeField] public EnemiesList enemies;
 
     [SerializeField] private Canvas gameCanvas;
     [SerializeField] private Slider playerHP;
     [SerializeField] private Slider enemyHP;
 
-    [SerializeField] private LevelPropertiesDisplay levelPropertiesDisplay;
+    private PointsCounter pointsCounter;
+  
     Rail railScript;
 
+
+    public event Action<int, int> LevelCompleteResults = delegate { };
     public delegate void LevelEnded();
     public event LevelEnded PlayerWin;
     public event LevelEnded PlayerLose;
@@ -32,6 +35,8 @@ public class RytmGameService : MonoBehaviour
         railPrefab = Instantiate(railPrefab, Vector3.up * -4, Quaternion.identity);
         railScript = railPrefab.GetComponent<Rail>();
 
+        pointsCounter = GetComponent<PointsCounter>();
+
         enemyHP = Instantiate(enemyHP, gameCanvas.transform);
         playerHP = Instantiate(playerHP, gameCanvas.transform);
 
@@ -40,8 +45,6 @@ public class RytmGameService : MonoBehaviour
         railScript.IconReachBottom += IconReachBottom;
         railScript.ResultsChecked += ResultsApply;
         railScript.NoIconInArea += WrongTiming;
-
-        levelPropertiesDisplay.LevelSelected += StartLevel;
     }
 
 
@@ -63,11 +66,11 @@ public class RytmGameService : MonoBehaviour
         playerHP.maxValue = playerMaxHP;
         playerHP.value = playerMaxHP;
         enemyHP.maxValue = enemyList[curentLvl].HP;
-        enemyHP.value = enemyHP.maxValue;
+        enemyHP.value = enemyHP.maxValue;       
 
         StopAllCoroutines();
         StartCoroutine(StartGame());
-
+        
     }
 
     public void NextLevel()
@@ -88,6 +91,7 @@ public class RytmGameService : MonoBehaviour
 
     private IEnumerator StartGame()
     {
+        pointsCounter.StartCounting(enemyList[curentLvl].HP);
         yield return new WaitForSeconds(0.1f);
         if (enemyList.Count > 0)
         {
@@ -102,12 +106,17 @@ public class RytmGameService : MonoBehaviour
         railScript.IconReachBottom -= IconReachBottom;
         railScript.ResultsChecked -= ResultsApply;
         railScript.NoIconInArea -= WrongTiming;
-
-        levelPropertiesDisplay.LevelSelected -= StartLevel;
     }
 
     private void IconReachBottom()
     {
+        pointsCounter.AddPoints(CompareResult.Lose);
+        ChangePlayerHP(-1);
+    }
+
+    private void WrongTiming()
+    {
+        pointsCounter.AddPoints(CompareResult.Lose);
         ChangePlayerHP(-1);
     }
 
@@ -126,13 +135,12 @@ public class RytmGameService : MonoBehaviour
     }
 
 
-    private void WrongTiming()
-    {
-        ChangePlayerHP(-1);
-    }
+   
 
     private void ResultsApply(CompareResult compareResult)
     {
+        pointsCounter.AddPoints(compareResult);
+
         switch (compareResult)
         {
             case CompareResult.Win:
@@ -177,9 +185,16 @@ public class RytmGameService : MonoBehaviour
             PlayerPrefs.SetInt("LevelUnlocked", curentLvl + 1);
             PlayerPrefs.Save();
         }
+
+
+        Debug.Log(pointsCounter.GetPointsStarResult());
+        LevelCompleteResults(curentLvl, pointsCounter.GetPointsStarResult());
         PlayerWin();
         Debug.Log("Player Win!");
+        Debug.Log(pointsCounter.GetPoints());
     }
+
+
 
     private void LoseGame()
     {

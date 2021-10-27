@@ -12,33 +12,33 @@ public class LevelPropertiesDisplay : MonoBehaviour
     [SerializeField] private TextMeshProUGUI enemyHP;
     [SerializeField] private TextMeshProUGUI enemyArea;
 
-    [SerializeField] private EnemiesList enemiesList;
+    private EnemiesList enemiesList;
 
     [SerializeField] private List<Button> buttons;
     [SerializeField] private List<Button> levelButtons;
 
     public delegate void LevelSelect(int level);
     public event LevelSelect LevelSelected;
+    public event LevelSelect LevelSelectedStart;
 
-    private int selectedLevel;
+    private int selectedLevel = 0;
 
-    public void OnEnable()
-    {
-        AvailableLevelUpdate();
-    }
+    
     public void ShowEnemyStats(int i)
     {
         if (i >= enemiesList.enemyList.Count)
         {
             Debug.Log("Wrong input to enemyList");
             return;
-        }
+        } 
 
         selectedLevel = i;
+        LevelSelected(selectedLevel);
         enemyName.text = enemiesList.enemyList[i].enemyName;
         enemyHP.text = "HP: " + enemiesList.enemyList[i].HP;
         enemyArea.text = "Area: " + enemiesList.enemyList[i].areaRange;
     }
+
 
     public void Start() 
     {
@@ -56,8 +56,13 @@ public class LevelPropertiesDisplay : MonoBehaviour
         ShowEnemyStats(0);
 
     }
-    
-    private void AvailableLevelUpdate()
+
+    public void SetEnemiesList(EnemiesList enemiesList)
+    {
+        this.enemiesList = enemiesList;
+    }
+
+    public void AvailableLevelUpdate()
     {
         for (int i = 0; i < levelButtons.Count; i++)
         {
@@ -75,8 +80,8 @@ public class LevelPropertiesDisplay : MonoBehaviour
 
 
     public void StartLevel()
-    {
-        LevelSelected(selectedLevel);
+    { 
+        LevelSelectedStart(selectedLevel);
     }
 
 }
