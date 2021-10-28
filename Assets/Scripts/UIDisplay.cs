@@ -18,27 +18,11 @@ public class UIDisplay : MonoBehaviour
 
     private SaveLoadStars saveLoadStars = new SaveLoadStars();
 
-    LevelStarData levelStarData = new LevelStarData();
-
-    private class LevelStarData
-    {
-        public int[] levelStarArray;
-    }
-
     private void Start()
     {
 
-        levelStarData.levelStarArray = new int[rytmGameService.enemies.enemyList.Count];
-
         saveLoadStars.SetUp(rytmGameService.enemies.enemyList.Count);
 
-        if (File.Exists(Application.dataPath + "/StarSaveFile.json"))
-        {
-            //LoadStars();
-        }
-
-        string json = JsonUtility.ToJson(levelStarData);
-        Debug.Log(json);
         SelectLevel(0);
 
         rytmGameService.LevelCompleteResults += SetStarsResult;
@@ -56,7 +40,7 @@ public class UIDisplay : MonoBehaviour
 
     private void ShowStarsLevel(int level)
     {
-        selectedLevelStarsDisplay.StarResults(levelStarData.levelStarArray[level]);
+        selectedLevelStarsDisplay.StarResults(saveLoadStars.currentLevelStarArray[level]);
     }
 
     private void OnDestroy()
@@ -76,18 +60,11 @@ public class UIDisplay : MonoBehaviour
     private void LoadStars()
     {
         saveLoadStars.LoadStars();
-        string json = File.ReadAllText(Application.dataPath + "/StarSaveFile.json");
-        Debug.Log(json);
-        
-        levelStarData = JsonUtility.FromJson<LevelStarData>(json);
     }
 
     private void SaveStars()
     {
         saveLoadStars.SaveStars();
-        string json = JsonUtility.ToJson(levelStarData);
-        Debug.Log(json);
-        File.WriteAllText(Application.dataPath + "/StarSaveFile.json", json);
     }
 
     public void ResetLevels()
@@ -97,13 +74,6 @@ public class UIDisplay : MonoBehaviour
         PlayerPrefs.SetInt("LevelUnlocked", 0);
         SelectLevel(0);
         AvailableLevelUpdate();
-
-        for (int i = 0; i < levelStarData.levelStarArray.Length; i++ )
-        {
-            levelStarData.levelStarArray[i] = 0;
-        }
-
-        SaveStars();
 
         ShowStarsLevel(0);
         levelSelectionDisplay.ShowEnemyStats(0);
@@ -116,16 +86,8 @@ public class UIDisplay : MonoBehaviour
 
     private void SetStarsResult(int level, int stars)
     {
-        if (levelStarData.levelStarArray[level] < stars)
-        {
-            levelStarData.levelStarArray[level] = stars;
-            SaveStars();
-        }
 
         saveLoadStars.SetStarsResult(level, stars);
-
-        string json = JsonUtility.ToJson(levelStarData);
-        Debug.Log(json);
 
         levelCompleteDisplay.StarResults(stars);
     }
