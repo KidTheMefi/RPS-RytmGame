@@ -205,8 +205,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2113610605}
-        m_TargetAssemblyTypeName: LevelPropertiesDisplay, Assembly-CSharp
+      - m_Target: {fileID: 364839200}
+        m_TargetAssemblyTypeName: UIDisplay, Assembly-CSharp
         m_MethodName: StartLevel
         m_Mode: 1
         m_Arguments:
@@ -1791,6 +1791,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 364839200}
+        m_TargetAssemblyTypeName: UIDisplay, Assembly-CSharp
+        m_MethodName: SelectLevel
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &727980596
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3085,9 +3097,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2113610605}
-        m_TargetAssemblyTypeName: LevelPropertiesDisplay, Assembly-CSharp
-        m_MethodName: ShowEnemyStats
+      - m_Target: {fileID: 364839200}
+        m_TargetAssemblyTypeName: UIDisplay, Assembly-CSharp
+        m_MethodName: SelectLevel
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3699,9 +3711,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2113610605}
-        m_TargetAssemblyTypeName: LevelPropertiesDisplay, Assembly-CSharp
-        m_MethodName: ShowEnemyStats
+      - m_Target: {fileID: 364839200}
+        m_TargetAssemblyTypeName: UIDisplay, Assembly-CSharp
+        m_MethodName: SelectLevel
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4260,6 +4272,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 364839200}
+        m_TargetAssemblyTypeName: UIDisplay, Assembly-CSharp
+        m_MethodName: SelectLevel
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1431353265
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4668,9 +4692,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2113610605}
-        m_TargetAssemblyTypeName: LevelPropertiesDisplay, Assembly-CSharp
-        m_MethodName: ShowEnemyStats
+      - m_Target: {fileID: 364839200}
+        m_TargetAssemblyTypeName: UIDisplay, Assembly-CSharp
+        m_MethodName: SelectLevel
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5338,9 +5362,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2113610605}
-        m_TargetAssemblyTypeName: LevelPropertiesDisplay, Assembly-CSharp
-        m_MethodName: ShowEnemyStats
+      - m_Target: {fileID: 364839200}
+        m_TargetAssemblyTypeName: UIDisplay, Assembly-CSharp
+        m_MethodName: SelectLevel
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5605,9 +5629,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2113610605}
-        m_TargetAssemblyTypeName: LevelPropertiesDisplay, Assembly-CSharp
-        m_MethodName: ShowEnemyStats
+      - m_Target: {fileID: 364839200}
+        m_TargetAssemblyTypeName: UIDisplay, Assembly-CSharp
+        m_MethodName: SelectLevel
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6075,6 +6099,7 @@ MonoBehaviour:
   enemyMoveSpeed: {fileID: 1318847754}
   enemyHP: {fileID: 911958460}
   enemyArea: {fileID: 1919304896}
+  enemiesList: {fileID: 11400000, guid: 57e11682b7212944fbb92b692363c682, type: 2}
   buttons: []
   levelButtons: []
 --- !u!114 &2113610606

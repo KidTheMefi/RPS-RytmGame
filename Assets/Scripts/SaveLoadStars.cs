@@ -81,7 +81,7 @@ public class SaveLoadStars
     public void SaveStars()
     {
         levelStarData.loadedLevelStarArray = currentLevelStarArray;
-        //currentLevelStarArray = levelStarData.loadedLevelStarArray;
+
         string json = JsonUtility.ToJson(levelStarData);
         Debug.Log("Test save  " + json);
         File.WriteAllText(Application.dataPath + "/TestStarSaveFile.json", json);
@@ -97,16 +97,4 @@ public class SaveLoadStars
         SaveStars();
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }
