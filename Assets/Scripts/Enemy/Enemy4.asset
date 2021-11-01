@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Enemy 4
   HP: 5
-  hasGeneralSpeed: 1
-  generalSpeed: 10
+  hasGeneralTimeToReachBottom: 0
+  generalTimeToReachBottom: 3
   bottomBorder: 1
   areaRange: 3
   spawnProperties:
   - itemSpeed: 40
+    timeToReachBottom: 2
     countDown: 0.75
     idClass: 090000000a0000000b000000
     repit: 10

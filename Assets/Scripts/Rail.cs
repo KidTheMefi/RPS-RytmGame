@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,27 +12,22 @@ public class Rail : MonoBehaviour
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private Transform bottomBorder;
     [SerializeField] private Transform upperBorder;
-    private List<Icon> iconsOnScene = new List<Icon>();
+
+    [SerializeField]  private List<IconMoveData> iconsMoveData = new List<IconMoveData>();
 
     private List<SpawnProperty> enemySpawnProperties;
     private Enemy currentEnemy;
     private int wave;
+
 
     public event Action IconReachBottom = delegate { };
     public event Action NoIconInArea = delegate { };
     public event Action<CompareResult> ResultsChecked = delegate { };
 
 
-   
-
     private void Awake()
     {
         iconFabric = GetComponent<IconFabric>();
-    }
-    void Start()
-    {
-        iconFabric = GetComponent<IconFabric>();
-
     }
 
     public void ClickAreaSetup(float bottomPos, float upperPos)
@@ -67,27 +63,27 @@ public class Rail : MonoBehaviour
 
 
 
-    private IEnumerator Spawn(SpawnProperty Spawn)
+    private IEnumerator Spawn(SpawnProperty spawn)
     {
-        for (int i = 0; i < Spawn.repit; i++)
+        for (int i = 0; i < spawn.repit; i++)
         {
-            Icon icon = iconFabric.Create(Spawn.idClass[UnityEngine.Random.Range(0, Spawn.idClass.Count)]);
+            Icon icon = iconFabric.Create(spawn.idClass[UnityEngine.Random.Range(0, spawn.idClass.Count)]);
             icon.transform.position = spawnPoint.position;
-            iconsOnScene.Add(icon);
+
             yield return new WaitForEndOfFrame();
 
-            if (currentEnemy.hasGeneralSpeed == true)
+            if (currentEnemy.hasGeneralTimeToReachBottom == true)
             {
-                StartCoroutine(IconMove(icon, currentEnemy.generalSpeed));
+                TweenDOMove(icon, currentEnemy.generalTimeToReachBottom);
             }
             else
             {
-                StartCoroutine(IconMove(icon, Spawn.itemSpeed));
+                TweenDOMove(icon, spawn.timeToReachBottom);
             }
-            yield return new WaitForSeconds(Spawn.countDown);
+            yield return new WaitForSeconds(spawn.countDown);
         }
 
-        if (currentEnemy.hasGeneralSpeed == true)
+        if (currentEnemy.hasGeneralTimeToReachBottom == true)
         {
             NextWave();
         }
@@ -101,38 +97,45 @@ public class Rail : MonoBehaviour
     private IEnumerator SpawnOver()
     {
         //Debug.Log("SpawnOver check started");
-        while (iconsOnScene.Count != 0)
+        while (iconsMoveData.Count != 0)
         {
             yield return new WaitForSeconds(0.1f);
         }
         NextWave();
     }
 
-    private IEnumerator IconMove(Icon icon, int speed)
-    {
 
-        while (icon != null && icon.transform.position != endPosition.position)
-        {
-            icon.transform.position = Vector3.MoveTowards(icon.transform.position, endPosition.position, speed * Time.deltaTime);
-            yield return new WaitForSeconds(Time.deltaTime);
-        }
-        if (icon != null)
-        {
-            IconReachBottom();
-            iconsOnScene.Remove(icon);
-            Destroy(icon.gameObject);
-        }
+    private void TweenDOMove (Icon icon, float duration)
+    {   
+        Tween moving = icon.transform.DOMove(endPosition.position, duration).SetEase(Ease.Linear);
+        IconMoveData iconMoveData = new IconMoveData(icon, moving);
+        iconsMoveData.Add(iconMoveData);
+        moving.OnComplete(() => IconMoveDataReachBottom(iconMoveData));
     }
 
-    public void AreaCheck(IconBaseClass playerIcon)
+    private void IconMoveDataReachBottom(IconMoveData iconMoveData) 
     {
-        Icon targetIcon = iconsOnScene.Find(icon => icon.transform.localPosition.y > bottomBorder.localPosition.y && icon.transform.localPosition.y < upperBorder.localPosition.y);
-        if (targetIcon != null)
-        {
+        IconReachBottom();
+        DestroyIconMove(iconMoveData);
+    }
 
-            ResultsChecked(targetIcon.Compare(playerIcon));
-            iconsOnScene.Remove(targetIcon);
-            Destroy(targetIcon.gameObject);
+    private void DestroyIconMove(IconMoveData iconMove)
+    {
+        iconMove.Tween.Kill();       
+        iconsMoveData.Remove(iconMove);
+        Destroy(iconMove.Icon.gameObject);
+    }
+
+
+    public void AreaCheck(IconBaseClass playerIcon)
+    {      
+        IconMoveData targetIconMove = iconsMoveData.Find(iconMove => iconMove.Icon.transform.localPosition.y > bottomBorder.localPosition.y
+                                                                  && iconMove.Icon.transform.localPosition.y < upperBorder.localPosition.y);
+
+        if (targetIconMove != null)
+        {
+            ResultsChecked(targetIconMove.Icon.Compare(playerIcon));
+            DestroyIconMove(targetIconMove);
         }
         else
         {
@@ -144,11 +147,11 @@ public class Rail : MonoBehaviour
     {
         StopAllCoroutines();
 
-        while (iconsOnScene.Count != 0)
+        while (iconsMoveData.Count != 0)
         {
-            Icon targetIcon = iconsOnScene[0];
-            iconsOnScene.Remove(targetIcon);
-            Destroy(targetIcon.gameObject);
+            IconMoveData targetIconMove = iconsMoveData[0];
+            iconsMoveData.Remove(targetIconMove);
+            DestroyIconMove(targetIconMove);
         }
     }
 }
