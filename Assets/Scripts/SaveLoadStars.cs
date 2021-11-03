@@ -54,7 +54,7 @@ public class SaveLoadStars
             levelStarData.loadedLevelStarArray = currentLevelStarArray;
         }
         string json = JsonUtility.ToJson(levelStarData);
-        Debug.Log("Test set  " + json);
+        Debug.Log("File Test set  " + json);
 
     }
 
@@ -68,14 +68,17 @@ public class SaveLoadStars
         }
 
         string json = JsonUtility.ToJson(levelStarData);
-        Debug.Log("Test set  " + json);
+
+      
+        //Debug.Log("Test set  " + json);
     }
 
     public void LoadStars()
     {
         string json = File.ReadAllText(Application.dataPath + "/TestStarSaveFile.json");
-        Debug.Log("Test load  " + json);
+        Debug.Log("File Test load  " + json);
         levelStarData = JsonUtility.FromJson<LevelStarData>(json);
+       
     }
 
     public void SaveStars()
@@ -83,7 +86,8 @@ public class SaveLoadStars
         levelStarData.loadedLevelStarArray = currentLevelStarArray;
 
         string json = JsonUtility.ToJson(levelStarData);
-        Debug.Log("Test save  " + json);
+        
+        Debug.Log("File Test save  " + json);
         File.WriteAllText(Application.dataPath + "/TestStarSaveFile.json", json);
     }
 
@@ -96,5 +100,7 @@ public class SaveLoadStars
         }
         SaveStars();
     }
+
+    
 
 }

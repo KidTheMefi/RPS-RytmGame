@@ -187,11 +187,11 @@ public class RytmGameService : MonoBehaviour
         }
 
 
-        Debug.Log(pointsCounter.GetPointsStarResult());
+        //Debug.Log(pointsCounter.GetPointsStarResult());
         LevelCompleteResults(curentLvl, pointsCounter.GetPointsStarResult());
         PlayerWin();
         Debug.Log("Player Win!");
-        Debug.Log(pointsCounter.GetPoints());
+        //Debug.Log(pointsCounter.GetPoints());
     }
 
 

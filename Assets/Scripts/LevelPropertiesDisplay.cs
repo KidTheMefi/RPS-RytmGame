@@ -47,11 +47,6 @@ public class LevelPropertiesDisplay : MonoBehaviour
         AvailableLevelUpdate();
     }
 
-    /*public void SetEnemiesList(EnemiesList enemiesList)
-    {
-        this.enemiesList = enemiesList;
-    }*/
-
     public void AvailableLevelUpdate()
     {
         for (int i = 0; i < levelButtons.Count; i++)
@@ -67,5 +62,4 @@ public class LevelPropertiesDisplay : MonoBehaviour
             }
         }
     }
-
 }

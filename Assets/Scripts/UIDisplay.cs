@@ -13,22 +13,59 @@ public class UIDisplay : MonoBehaviour
     [SerializeField] private LevelCompleteDisplay levelCompleteDisplay;
     [SerializeField] private LevelPropertiesDisplay levelSelectionDisplay;
     [SerializeField] private LevelCompleteDisplay selectedLevelStarsDisplay;
+    [SerializeField] private GameObject LoadingPanel; 
 
     private int selectedLevel = 0;
 
-    private SaveLoadStars saveLoadStars = new SaveLoadStars();
+    private CompletedLevelData completedLevelData = new CompletedLevelData();
+    //private SaveLoadStars saveLoadStars = new SaveLoadStars();
+    [SerializeField] private PlayFabScript playFabScript;
 
     private void Start()
     {
 
-        saveLoadStars.SetUp(rytmGameService.enemies.enemyList.Count);
 
-        SelectLevel(0);
+
+        //saveLoadStars.SetUp(rytmGameService.enemies.enemyList.Count);
+        completedLevelData.SetLevelsArrayLenght(rytmGameService.enemies.enemyList.Count);
+        //playFabScript.GetCompletedLevelData();
+
+        
+
+
+        completedLevelData.CompletedLevelDataReady += LoadingEnded;
+        completedLevelData.SaveCompleteLevelData += SaveCompletedLevelData;
+        playFabScript.CompletedLevelDataLoaded += SetLoadedCompletedLevelData;
+        playFabScript.NoCompletedLevelData += SetUpNewComletedLevelData;
 
         rytmGameService.LevelCompleteResults += SetStarsResult;
         rytmGameService.PlayerWin += AvailableLevelUpdate;
         rytmGameService.PlayerWin += OpenLevelCompleteMenu;
         rytmGameService.PlayerLose += OpenLevelLoseMenu;
+    }
+
+
+    private void LoadingEnded()
+    {
+        SelectLevel(0);
+        AvailableLevelUpdate();
+        LoadingPanel.SetActive(false);
+    }
+
+    private void SetUpNewComletedLevelData()
+    {
+        completedLevelData.SetUpNewCompleteLevelData(rytmGameService.enemies.enemyList.Count);
+    }
+
+    private void SetLoadedCompletedLevelData(string completedLevelDataJSON)
+    {
+        
+        completedLevelData.LoadFromPlayFab(completedLevelDataJSON);
+    }
+
+    private void SaveCompletedLevelData(string completedLevelDataJSON)
+    {
+        playFabScript.SetComlpetedLevelData(completedLevelDataJSON);
     }
 
     public void SelectLevel (int level)
@@ -40,11 +77,19 @@ public class UIDisplay : MonoBehaviour
 
     private void ShowStarsLevel(int level)
     {
-        selectedLevelStarsDisplay.StarResults(saveLoadStars.currentLevelStarArray[level]);
+        selectedLevelStarsDisplay.StarResults(completedLevelData.currentLevelStarArray[level]);
+        //selectedLevelStarsDisplay.StarResults(saveLoadStars.currentLevelStarArray[level]);
     }
 
     private void OnDestroy()
     {
+
+        completedLevelData.CompletedLevelDataReady -= LoadingEnded;
+        completedLevelData.SaveCompleteLevelData -= SaveCompletedLevelData;
+        playFabScript.CompletedLevelDataLoaded -= SetLoadedCompletedLevelData;
+        playFabScript.NoCompletedLevelData -= SetUpNewComletedLevelData;
+
+
         rytmGameService.LevelCompleteResults -= SetStarsResult;
         rytmGameService.PlayerWin -= AvailableLevelUpdate;
         rytmGameService.PlayerWin -= OpenLevelCompleteMenu;
@@ -57,7 +102,7 @@ public class UIDisplay : MonoBehaviour
         rytmGameService.StartLevel(selectedLevel);
     }
 
-    private void LoadStars()
+   /* private void LoadStars()
     {
         saveLoadStars.LoadStars();
     }
@@ -66,11 +111,11 @@ public class UIDisplay : MonoBehaviour
     {
         saveLoadStars.SaveStars();
     }
-
+    */
     public void ResetLevels()
     {
-        saveLoadStars.ResetLevels();
-
+        //saveLoadStars.ResetLevels();
+        completedLevelData.ResetLevels();
         PlayerPrefs.SetInt("LevelUnlocked", 0);
         SelectLevel(0);
         AvailableLevelUpdate();
@@ -86,8 +131,8 @@ public class UIDisplay : MonoBehaviour
 
     private void SetStarsResult(int level, int stars)
     {
-
-        saveLoadStars.SetStarsResult(level, stars);
+        completedLevelData.SetStarsResult(level, stars);
+        //saveLoadStars.SetStarsResult(level, stars);
 
         levelCompleteDisplay.StarResults(stars);
     }
