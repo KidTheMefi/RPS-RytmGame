@@ -17,6 +17,8 @@ public class RytmGameService : MonoBehaviour
     [SerializeField] private Slider playerHP;
     [SerializeField] private Slider enemyHP;
 
+    [SerializeField] private Animator playerAnimator; 
+
     private PointsCounter pointsCounter;
   
     Rail railScript;
@@ -111,12 +113,14 @@ public class RytmGameService : MonoBehaviour
     private void IconReachBottom()
     {
         pointsCounter.AddPoints(CompareResult.Lose);
+        playerAnimator.SetTrigger("Damage");
         ChangePlayerHP(-1);
     }
 
     private void WrongTiming()
     {
         pointsCounter.AddPoints(CompareResult.Lose);
+        playerAnimator.SetTrigger("Damage");
         ChangePlayerHP(-1);
     }
 
@@ -126,15 +130,32 @@ public class RytmGameService : MonoBehaviour
         if (playerChoise >= 0 && playerChoise < 3)
         {
             playerIcon = (IconBaseClass)playerChoise;
+            PlayerAnimationPlay(playerIcon);
             railScript.AreaCheck(playerIcon);
         }
         else
-        {
+        {   
             Debug.LogWarning("Wrong input in CompareMethod!");
         }
     }
 
+    private void PlayerAnimationPlay(IconBaseClass playerIcon)
+    {
+        switch (playerIcon)
+        {
+            case IconBaseClass.Arrow:
+                playerAnimator.SetTrigger("Arrow");
+                break;
+            case IconBaseClass.Sword:
+                playerAnimator.SetTrigger("Sword");
+                break;
+            case IconBaseClass.Shield:
+                playerAnimator.SetTrigger("Shield");
+                break;
 
+        }
+
+    }
    
 
     private void ResultsApply(CompareResult compareResult)
@@ -147,6 +168,7 @@ public class RytmGameService : MonoBehaviour
                 ChangeEnemyHP(-1);
                 break;
             case CompareResult.Lose:
+                playerAnimator.SetTrigger("Damage");
                 ChangePlayerHP(-1);
                 break;
             case CompareResult.Draw:
