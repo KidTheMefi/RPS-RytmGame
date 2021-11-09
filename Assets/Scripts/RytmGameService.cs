@@ -4,6 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum GameState
+{
+    gameOn, pauze
+}
+
 public class RytmGameService : MonoBehaviour
 {
     [SerializeField] private GameObject railPrefab;
@@ -20,7 +25,9 @@ public class RytmGameService : MonoBehaviour
     [SerializeField] private Animator playerAnimator; 
 
     private PointsCounter pointsCounter;
-  
+
+    public GameState gameStateMachine = GameState.gameOn;
+
     Rail railScript;
 
 
@@ -31,11 +38,15 @@ public class RytmGameService : MonoBehaviour
 
     public int playerMaxHP;
     private int curentLvl;
-    
+
+    [SerializeField] private IconButtonService iconButtonService; 
+
     void Start()
     {   
-        railPrefab = Instantiate(railPrefab, Vector3.up * -4, Quaternion.identity);
+        railPrefab = Instantiate(railPrefab, Vector3.up * -10, Quaternion.identity);
         railScript = railPrefab.GetComponent<Rail>();
+
+        iconButtonService = Instantiate(iconButtonService, gameObject.transform);
 
         pointsCounter = GetComponent<PointsCounter>();
 
@@ -44,14 +55,25 @@ public class RytmGameService : MonoBehaviour
 
         enemyList = enemies.enemyList;
 
+
+        iconButtonService.ButtonPressed += ButtonPressed;
         railScript.IconReachBottom += IconReachBottom;
         railScript.ResultsChecked += ResultsApply;
         railScript.NoIconInArea += WrongTiming;
     }
 
+    private void OnDestroy()
+    {
+        iconButtonService.ButtonPressed -= ButtonPressed;
+        railScript.IconReachBottom -= IconReachBottom;
+        railScript.ResultsChecked -= ResultsApply;
+        railScript.NoIconInArea -= WrongTiming;
+    }
+
 
     public void StartLevel(int lvl)
     {
+        gameStateMachine = GameState.gameOn;
         railScript.StopAndClearRail();
 
         if (lvl >= enemyList.Count)
@@ -103,58 +125,51 @@ public class RytmGameService : MonoBehaviour
     }
 
 
-    private void OnDestroy()
-    {
-        railScript.IconReachBottom -= IconReachBottom;
-        railScript.ResultsChecked -= ResultsApply;
-        railScript.NoIconInArea -= WrongTiming;
-    }
-
+ 
     private void IconReachBottom()
     {
-        pointsCounter.AddPoints(CompareResult.Lose);
-        playerAnimator.SetTrigger("Damage");
-        ChangePlayerHP(-1);
+        if (gameStateMachine == GameState.gameOn)
+        {
+            pointsCounter.AddPoints(CompareResult.Lose);
+            playerAnimator.SetTrigger("Damage");
+            ChangePlayerHP(-1);
+        }
     }
 
     private void WrongTiming()
-    {
+    {   
         pointsCounter.AddPoints(CompareResult.Lose);
         playerAnimator.SetTrigger("Damage");
         ChangePlayerHP(-1);
     }
 
-    public void ButtonPressed(int playerChoise)
+    public void ButtonPressed(IconBaseClass playerChoise)
     {
-        IconBaseClass playerIcon;
-        if (playerChoise >= 0 && playerChoise < 3)
+        if (gameStateMachine == GameState.gameOn)
         {
-            playerIcon = (IconBaseClass)playerChoise;
-            PlayerAnimationPlay(playerIcon);
-            railScript.AreaCheck(playerIcon);
-        }
-        else
-        {   
-            Debug.LogWarning("Wrong input in CompareMethod!");
+            PlayerAnimationPlay(playerChoise);
+            railScript.AreaCheck(playerChoise);
         }
     }
 
     private void PlayerAnimationPlay(IconBaseClass playerIcon)
     {
-        switch (playerIcon)
+        if (gameStateMachine == GameState.gameOn)
         {
-            case IconBaseClass.Arrow:
-                playerAnimator.SetTrigger("Arrow");
-                break;
-            case IconBaseClass.Sword:
-                playerAnimator.SetTrigger("Sword");
-                break;
-            case IconBaseClass.Shield:
-                playerAnimator.SetTrigger("Shield");
-                break;
+            switch (playerIcon)
+            {
+                case IconBaseClass.Arrow:
+                    playerAnimator.SetTrigger("Arrow");
+                    break;
+                case IconBaseClass.Sword:
+                    playerAnimator.SetTrigger("Sword");
+                    break;
+                case IconBaseClass.Shield:
+                    playerAnimator.SetTrigger("Shield");
+                    break;
 
+            }
         }
-
     }
    
 
@@ -212,7 +227,9 @@ public class RytmGameService : MonoBehaviour
         //Debug.Log(pointsCounter.GetPointsStarResult());
         LevelCompleteResults(curentLvl, pointsCounter.GetPointsStarResult());
         PlayerWin();
+        gameStateMachine = GameState.pauze;
         Debug.Log("Player Win!");
+        
         //Debug.Log(pointsCounter.GetPoints());
     }
 
@@ -220,6 +237,7 @@ public class RytmGameService : MonoBehaviour
 
     private void LoseGame()
     {
+        gameStateMachine = GameState.pauze;
         PlayerLose();
         Debug.Log("Enemy Win!");
     }

@@ -8,6 +8,8 @@ public class LevelCompleteDisplay : MonoBehaviour
     [SerializeField] private List<Image> starsList ;
     public Color enableColor;
     public Color disableColor;
+    public Sprite starOn;
+    public Sprite starOff; 
 
 
 
@@ -20,10 +22,12 @@ public class LevelCompleteDisplay : MonoBehaviour
 
             if (i < stars)
             {
+                starsList[i].sprite = starOn;
                 starsList[i].color = enableColor;
             }
             else
             {
+                starsList[i].sprite = starOff;
                 starsList[i].color = disableColor;
             }
             

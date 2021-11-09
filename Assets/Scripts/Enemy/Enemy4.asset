@@ -20,7 +20,7 @@ MonoBehaviour:
   areaRange: 3
   spawnProperties:
   - itemSpeed: 40
-    timeToReachBottom: 2
+    timeToReachBottom: 3
     countDown: 0.75
     idClass: 090000000a0000000b000000
     repit: 10

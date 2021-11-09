@@ -15,13 +15,13 @@ MonoBehaviour:
   enemyName: Enemy 5
   HP: 5
   hasGeneralTimeToReachBottom: 1
-  generalTimeToReachBottom: 3.8
+  generalTimeToReachBottom: 3
   bottomBorder: 0
   areaRange: 5
   spawnProperties:
   - itemSpeed: 15
-    timeToReachBottom: 1
-    countDown: 0.5
+    timeToReachBottom: 3
+    countDown: 0.75
     idClass: 000000000100000002000000
     repit: 2
   - itemSpeed: 20

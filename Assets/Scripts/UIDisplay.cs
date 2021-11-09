@@ -8,29 +8,35 @@ using System;
 public class UIDisplay : MonoBehaviour
 {
     [SerializeField] private GameObject LevelCompletePanel;
+    [SerializeField] private LevelCompleteDisplay levelCompleteDisplay;
     [SerializeField] private GameObject LevelLosePanel;
     [SerializeField] private RytmGameService rytmGameService;
-    [SerializeField] private LevelCompleteDisplay levelCompleteDisplay;
-    [SerializeField] private LevelPropertiesDisplay levelSelectionDisplay;
-    [SerializeField] private LevelCompleteDisplay selectedLevelStarsDisplay;
-    [SerializeField] private GameObject LoadingPanel; 
+  
+    //[SerializeField] private LevelPropertiesDisplay levelSelectionDisplay;
+    //[SerializeField] private LevelCompleteDisplay selectedLevelStarsDisplay;
+    [SerializeField] private GameObject LoadingPanel;
+    [SerializeField] private GameObject MainMenuPanel;
+ 
+    [SerializeField] private LevelMenu levelSelectMenuPrefab;
+    private LevelMenu levelSelectMenu;
 
-    private int selectedLevel = 0;
+    [SerializeField] private Canvas uiDisplayCanvas;
+    [SerializeField] private Canvas gameCanvas;  
 
     private CompletedLevelData completedLevelData = new CompletedLevelData();
     //private SaveLoadStars saveLoadStars = new SaveLoadStars();
     [SerializeField] private PlayFabScript playFabScript;
 
+
     private void Start()
     {
-
 
 
         //saveLoadStars.SetUp(rytmGameService.enemies.enemyList.Count);
         completedLevelData.SetLevelsArrayLenght(rytmGameService.enemies.enemyList.Count);
         //playFabScript.GetCompletedLevelData();
 
-        
+
 
 
         completedLevelData.CompletedLevelDataReady += LoadingEnded;
@@ -39,7 +45,7 @@ public class UIDisplay : MonoBehaviour
         playFabScript.NoCompletedLevelData += SetUpNewComletedLevelData;
 
         rytmGameService.LevelCompleteResults += SetStarsResult;
-        rytmGameService.PlayerWin += AvailableLevelUpdate;
+        //rytmGameService.PlayerWin += AvailableLevelUpdate;
         rytmGameService.PlayerWin += OpenLevelCompleteMenu;
         rytmGameService.PlayerLose += OpenLevelLoseMenu;
     }
@@ -47,8 +53,7 @@ public class UIDisplay : MonoBehaviour
 
     private void LoadingEnded()
     {
-        SelectLevel(0);
-        AvailableLevelUpdate();
+
         LoadingPanel.SetActive(false);
     }
 
@@ -59,7 +64,7 @@ public class UIDisplay : MonoBehaviour
 
     private void SetLoadedCompletedLevelData(string completedLevelDataJSON)
     {
-        
+
         completedLevelData.LoadFromPlayFab(completedLevelDataJSON);
     }
 
@@ -68,18 +73,6 @@ public class UIDisplay : MonoBehaviour
         playFabScript.SetComlpetedLevelData(completedLevelDataJSON);
     }
 
-    public void SelectLevel (int level)
-    {
-        selectedLevel = level;
-        levelSelectionDisplay.ShowEnemyStats(level);
-        ShowStarsLevel(level);
-    }
-
-    private void ShowStarsLevel(int level)
-    {
-        selectedLevelStarsDisplay.StarResults(completedLevelData.currentLevelStarArray[level]);
-        //selectedLevelStarsDisplay.StarResults(saveLoadStars.currentLevelStarArray[level]);
-    }
 
     private void OnDestroy()
     {
@@ -91,55 +84,38 @@ public class UIDisplay : MonoBehaviour
 
 
         rytmGameService.LevelCompleteResults -= SetStarsResult;
-        rytmGameService.PlayerWin -= AvailableLevelUpdate;
         rytmGameService.PlayerWin -= OpenLevelCompleteMenu;
         rytmGameService.PlayerLose -= OpenLevelLoseMenu;
     }
 
-
-    public void StartLevel()
+    public void StartLevel(int sl)
     {
-        rytmGameService.StartLevel(selectedLevel);
+        gameCanvas.enabled = true;
+        uiDisplayCanvas.enabled = true; 
+        Resume();
+        rytmGameService.StartLevel(sl);
     }
 
-   /* private void LoadStars()
-    {
-        saveLoadStars.LoadStars();
-    }
 
-    private void SaveStars()
-    {
-        saveLoadStars.SaveStars();
-    }
-    */
     public void ResetLevels()
     {
-        //saveLoadStars.ResetLevels();
+
         completedLevelData.ResetLevels();
         PlayerPrefs.SetInt("LevelUnlocked", 0);
-        SelectLevel(0);
-        AvailableLevelUpdate();
-
-        ShowStarsLevel(0);
-        levelSelectionDisplay.ShowEnemyStats(0);
-    }
-
-    private void AvailableLevelUpdate ()
-    {
-        levelSelectionDisplay.AvailableLevelUpdate();
+  
     }
 
     private void SetStarsResult(int level, int stars)
     {
         completedLevelData.SetStarsResult(level, stars);
-        //saveLoadStars.SetStarsResult(level, stars);
+        
 
         levelCompleteDisplay.StarResults(stars);
     }
 
-   
+
     private void OpenLevelCompleteMenu()
-    { 
+    {
         LevelCompletePanel.SetActive(true);
         Pause();
     }
@@ -152,12 +128,13 @@ public class UIDisplay : MonoBehaviour
 
     public void Pause()
     {
-
+        rytmGameService.gameStateMachine = GameState.pauze;
         Time.timeScale = 0f;
     }
 
     public void Resume()
     {
+        rytmGameService.gameStateMachine = GameState.gameOn;
         Time.timeScale = 1f;
     }
 
@@ -167,5 +144,23 @@ public class UIDisplay : MonoBehaviour
         Application.Quit();
     }
 
-   
+    public void OpenLevelMenu()
+    {     
+        levelSelectMenu = Instantiate(levelSelectMenuPrefab);
+        levelSelectMenu.SetUpLevelMenu(completedLevelData.currentLevelStarArray);
+        levelSelectMenu.StartSelectedLevel += StartLevel;
+        levelSelectMenu.BackToMainMenuEvent += BackToMainMenu;
+        //gameDisplay
+        uiDisplayCanvas.enabled = false;
+        gameCanvas.enabled = false;
+        Pause();
+
+    }
+
+    public void BackToMainMenu()
+    {
+        uiDisplayCanvas.enabled = true;
+        MainMenuPanel.SetActive(true);
+    }
+
 }
