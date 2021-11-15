@@ -13,14 +13,15 @@ MonoBehaviour:
   m_Name: Enemy1
   m_EditorClassIdentifier: 
   enemyName: Enemy 1
-  HP: 5
-  hasGeneralTimeToReachBottom: 0
-  generalTimeToReachBottom: 3
+  dialogue: {fileID: 11400000, guid: 547d9c836cc75b1418d38e85765196bf, type: 2}
+  HP: 10
+  hasGeneralTimeToReachBottom: 1
+  generalTimeToReachBottom: 4
   bottomBorder: 0
   areaRange: 4
   spawnProperties:
-  - itemSpeed: 20
-    timeToReachBottom: 3
-    countDown: 0.75
+  - timeToReachBottom: 2.8
+    countDown: 1
     idClass: 010000000000000002000000
     repit: 10
+  enemyCharacterPrefab: {fileID: 1659931096873860977, guid: 0d3105e9d015f154180b49c562d04510, type: 3}

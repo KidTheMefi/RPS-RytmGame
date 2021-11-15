@@ -46,7 +46,6 @@ public class LevelMenu : MonoBehaviour
     private void UpdateLevelMenu()
     {
         levelPoints = GetComponentsInChildren<LevelPoint>();
-
         foreach (LevelPoint LP in levelPoints)
         {
             LP.pointClicked += LevelSelected;

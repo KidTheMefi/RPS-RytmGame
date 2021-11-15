@@ -16,9 +16,12 @@ public class UIDisplay : MonoBehaviour
     //[SerializeField] private LevelCompleteDisplay selectedLevelStarsDisplay;
     [SerializeField] private GameObject LoadingPanel;
     [SerializeField] private GameObject MainMenuPanel;
- 
-    [SerializeField] private LevelMenu levelSelectMenuPrefab;
+
+    [SerializeField] private DialogueService dialogueService;
+
+   [SerializeField] private LevelMenu levelSelectMenuPrefab;
     private LevelMenu levelSelectMenu;
+
 
     [SerializeField] private Canvas uiDisplayCanvas;
     [SerializeField] private Canvas gameCanvas;  
@@ -48,6 +51,8 @@ public class UIDisplay : MonoBehaviour
         //rytmGameService.PlayerWin += AvailableLevelUpdate;
         rytmGameService.PlayerWin += OpenLevelCompleteMenu;
         rytmGameService.PlayerLose += OpenLevelLoseMenu;
+        rytmGameService.EnemyHasDialogue += OpenDialogue;
+        dialogueService.DialogueEnded += Resume;
     }
 
 
@@ -86,6 +91,8 @@ public class UIDisplay : MonoBehaviour
         rytmGameService.LevelCompleteResults -= SetStarsResult;
         rytmGameService.PlayerWin -= OpenLevelCompleteMenu;
         rytmGameService.PlayerLose -= OpenLevelLoseMenu;
+        rytmGameService.EnemyHasDialogue -= OpenDialogue;
+        dialogueService.DialogueEnded -= Resume;
     }
 
     public void StartLevel(int sl)
@@ -103,6 +110,11 @@ public class UIDisplay : MonoBehaviour
         completedLevelData.ResetLevels();
         PlayerPrefs.SetInt("LevelUnlocked", 0);
   
+    }
+
+    public void OpenAllLevels()
+    {
+        PlayerPrefs.SetInt("LevelUnlocked", rytmGameService.enemies.enemyList.Count - 1);
     }
 
     private void SetStarsResult(int level, int stars)
@@ -146,6 +158,11 @@ public class UIDisplay : MonoBehaviour
 
     public void OpenLevelMenu()
     {     
+        if (levelSelectMenu != null)
+        {
+            Destroy(levelSelectMenu);
+        }
+
         levelSelectMenu = Instantiate(levelSelectMenuPrefab);
         levelSelectMenu.SetUpLevelMenu(completedLevelData.currentLevelStarArray);
         levelSelectMenu.StartSelectedLevel += StartLevel;
@@ -161,6 +178,14 @@ public class UIDisplay : MonoBehaviour
     {
         uiDisplayCanvas.enabled = true;
         MainMenuPanel.SetActive(true);
+    }
+
+    public void OpenDialogue(Dialogue dialogue)
+    {
+        Pause();
+        dialogueService.gameObject.SetActive(true);
+        dialogueService.StartDialogue(dialogue);
+
     }
 
 }

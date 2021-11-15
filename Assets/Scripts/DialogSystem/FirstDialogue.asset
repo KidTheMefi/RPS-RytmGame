@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e3dfae616eaeb74ab171df96d7510e7, type: 3}
+  m_Name: FirstDialogue
+  m_EditorClassIdentifier: 
+  speach:
+  - name: First character
+    portraite: {fileID: 21300000, guid: 60b4b8c693fbb2d419e2331a1022a56b, type: 3}
+    sentences:
+    - Hello!
+    - This is test Dialog
+    - I hope everything is fine
+    - give word to next character
+  - name: Second character
+    portraite: {fileID: 21300000, guid: d8346fc2db87d8b46bbfe4e214bcedf9, type: 3}
+    sentences:
+    - 'Did it work? '
+    - i hope so
+    - anyway, lets try more character
+  - name: third character
+    portraite: {fileID: 21300000, guid: a4c6d5510963c9240b9c855c655962a5, type: 3}
+    sentences:
+    - WAAgh!!!!

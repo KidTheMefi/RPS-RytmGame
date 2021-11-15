@@ -21,8 +21,12 @@ public class RytmGameService : MonoBehaviour
     [SerializeField] private Canvas gameCanvas;
     [SerializeField] private Slider playerHP;
     [SerializeField] private Slider enemyHP;
+    [SerializeField] private DamageShow damageShow;
 
-    [SerializeField] private Animator playerAnimator; 
+    [SerializeField] private Animator playerAnimator;
+    [SerializeField] private BloodParticleFabric bloodParticle;
+
+    [SerializeField] private EnemyModel enemyModel;
 
     private PointsCounter pointsCounter;
 
@@ -30,7 +34,7 @@ public class RytmGameService : MonoBehaviour
 
     Rail railScript;
 
-
+    public event Action<Dialogue> EnemyHasDialogue = delegate { };
     public event Action<int, int> LevelCompleteResults = delegate { };
     public delegate void LevelEnded();
     public event LevelEnded PlayerWin;
@@ -39,10 +43,10 @@ public class RytmGameService : MonoBehaviour
     public int playerMaxHP;
     private int curentLvl;
 
-    [SerializeField] private IconButtonService iconButtonService; 
+    [SerializeField] private IconButtonService iconButtonService;
 
     void Start()
-    {   
+    {
         railPrefab = Instantiate(railPrefab, Vector3.up * -10, Quaternion.identity);
         railScript = railPrefab.GetComponent<Rail>();
 
@@ -73,7 +77,7 @@ public class RytmGameService : MonoBehaviour
 
     public void StartLevel(int lvl)
     {
-        gameStateMachine = GameState.gameOn;
+
         railScript.StopAndClearRail();
 
         if (lvl >= enemyList.Count)
@@ -90,16 +94,42 @@ public class RytmGameService : MonoBehaviour
         playerHP.maxValue = playerMaxHP;
         playerHP.value = playerMaxHP;
         enemyHP.maxValue = enemyList[curentLvl].HP;
-        enemyHP.value = enemyHP.maxValue;       
+        enemyHP.value = enemyHP.maxValue;
+
+
+        if (enemyModel != null)
+        {
+            Destroy(enemyModel.gameObject);
+        }
+
+            if (enemyList[lvl].enemyCharacterPrefab != null)
+        {
+            enemyModel = Instantiate(enemyList[lvl].enemyCharacterPrefab, gameObject.transform);
+        }
+
+
+
+        if (enemyList[lvl].dialogue != null)
+        {
+            EnemyHasDialogue(enemyList[lvl].dialogue);
+        }
 
         StopAllCoroutines();
         StartCoroutine(StartGame());
-        
+
     }
 
     public void NextLevel()
     {
-        StartLevel(curentLvl + 1);
+        if (curentLvl + 1 < enemyList.Count)
+        {
+            StartLevel(curentLvl + 1);
+        }
+        else
+        {
+            Debug.Log("No more enemies start last one");
+            StartLevel(curentLvl);
+        }
     }
 
     public void RestartLevel()
@@ -115,6 +145,7 @@ public class RytmGameService : MonoBehaviour
 
     private IEnumerator StartGame()
     {
+        gameStateMachine = GameState.gameOn;
         pointsCounter.StartCounting(enemyList[curentLvl].HP);
         yield return new WaitForSeconds(0.1f);
         if (enemyList.Count > 0)
@@ -125,7 +156,7 @@ public class RytmGameService : MonoBehaviour
     }
 
 
- 
+
     private void IconReachBottom()
     {
         if (gameStateMachine == GameState.gameOn)
@@ -137,7 +168,7 @@ public class RytmGameService : MonoBehaviour
     }
 
     private void WrongTiming()
-    {   
+    {
         pointsCounter.AddPoints(CompareResult.Lose);
         playerAnimator.SetTrigger("Damage");
         ChangePlayerHP(-1);
@@ -171,7 +202,7 @@ public class RytmGameService : MonoBehaviour
             }
         }
     }
-   
+
 
     private void ResultsApply(CompareResult compareResult)
     {
@@ -195,6 +226,8 @@ public class RytmGameService : MonoBehaviour
 
     private void ChangePlayerHP(int change)
     {
+        bloodParticle.CreateBlood();
+        damageShow.DamageDeal();
         playerHP.value += change;
         if (playerHP.value <= 0)
         {
@@ -204,6 +237,12 @@ public class RytmGameService : MonoBehaviour
 
     private void ChangeEnemyHP(int change)
     {
+        if (enemyModel != null)
+        {
+            enemyModel.AnimationSetTrigger("Damage");
+            enemyModel.playBloodParticle();
+        }
+
         enemyHP.value += change;
         if (enemyHP.value <= 0)
         {
@@ -217,7 +256,8 @@ public class RytmGameService : MonoBehaviour
 
     private void WinGame()
     {
-        if (PlayerPrefs.GetInt("LevelUnlocked", 0) < curentLvl + 1)
+        if (PlayerPrefs.GetInt("LevelUnlocked", 0) < curentLvl + 1
+            && PlayerPrefs.GetInt("LevelUnlocked", 0) < enemyList.Count - 1)
         {
             PlayerPrefs.SetInt("LevelUnlocked", curentLvl + 1);
             PlayerPrefs.Save();
@@ -229,7 +269,7 @@ public class RytmGameService : MonoBehaviour
         PlayerWin();
         gameStateMachine = GameState.pauze;
         Debug.Log("Player Win!");
-        
+
         //Debug.Log(pointsCounter.GetPoints());
     }
 

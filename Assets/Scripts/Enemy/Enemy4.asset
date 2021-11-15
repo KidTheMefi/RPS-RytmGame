@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: Enemy4
   m_EditorClassIdentifier: 
   enemyName: Enemy 4
+  dialogue: {fileID: 0}
   HP: 5
-  hasGeneralTimeToReachBottom: 0
-  generalTimeToReachBottom: 3
-  bottomBorder: 1
-  areaRange: 3
+  hasGeneralTimeToReachBottom: 1
+  generalTimeToReachBottom: 3.3
+  bottomBorder: 0
+  areaRange: 4
   spawnProperties:
-  - itemSpeed: 40
-    timeToReachBottom: 3
-    countDown: 0.75
-    idClass: 090000000a0000000b000000
+  - timeToReachBottom: 2.8
+    countDown: 1
+    idClass: 000000000100000002000000
     repit: 10

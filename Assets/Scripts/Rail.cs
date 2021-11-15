@@ -14,6 +14,8 @@ public class Rail : MonoBehaviour
     [SerializeField] private Transform upperBorder;
 
     [SerializeField]  private List<IconMoveData> iconsMoveData = new List<IconMoveData>();
+    [SerializeField] private IconDestoyParticleFabric iconDestoyParticleFabric;
+
 
     private List<SpawnProperty> enemySpawnProperties;
     private Enemy currentEnemy;
@@ -134,6 +136,9 @@ public class Rail : MonoBehaviour
 
         if (targetIconMove != null)
         {
+            Vector3 iconPosition = targetIconMove.Icon.gameObject.GetComponent<Transform>().position;
+            iconDestoyParticleFabric.CreateBlast(iconPosition, targetIconMove.Icon.Compare(playerIcon));
+
             ResultsChecked(targetIconMove.Icon.Compare(playerIcon));
             DestroyIconMove(targetIconMove);
         }
