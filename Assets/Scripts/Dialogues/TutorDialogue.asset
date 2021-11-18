@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: TutorDialogue
   m_EditorClassIdentifier: 
   speach:
-  - name: Your character
+  - name: You
+    isEnemy: 0
     portraite: {fileID: 21300000, guid: 60b4b8c693fbb2d419e2331a1022a56b, type: 3}
     sentences:
     - Great!

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Enemy10 Boss
   m_EditorClassIdentifier: 
   enemyName: Rhytm Boss 2
+  dialogue: {fileID: 0}
   HP: 35
   hasGeneralTimeToReachBottom: 0
   generalTimeToReachBottom: 3
@@ -25,5 +26,7 @@ MonoBehaviour:
     repit: 10
   - timeToReachBottom: 2
     countDown: 0.5
-    idClass: 000000000100000002000000
+    idClass: 030000000400000005000000
     repit: 5
+  enemyCharacterPrefab: {fileID: -360032176682600552, guid: 12ec8f2a942ad7448be35158e2b9b346, type: 3}
+  enemyBackground: {fileID: 0}

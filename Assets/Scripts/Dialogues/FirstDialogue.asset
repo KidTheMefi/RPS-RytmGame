@@ -13,20 +13,24 @@ MonoBehaviour:
   m_Name: FirstDialogue
   m_EditorClassIdentifier: 
   speach:
-  - name: First character
+  - name: You
+    isEnemy: 0
     portraite: {fileID: 21300000, guid: 60b4b8c693fbb2d419e2331a1022a56b, type: 3}
     sentences:
-    - Hello!
-    - This is test Dialog
-    - I hope everything is fine
-    - give word to next character
-  - name: Second character
+    - Get out of my way.
+  - name: Bandit
+    isEnemy: 1
     portraite: {fileID: 21300000, guid: d8346fc2db87d8b46bbfe4e214bcedf9, type: 3}
     sentences:
-    - 'Did it work? '
-    - i hope so
-    - anyway, lets try more character
-  - name: third character
-    portraite: {fileID: 21300000, guid: a4c6d5510963c9240b9c855c655962a5, type: 3}
+    - Or what?
+  - name: You
+    isEnemy: 0
+    portraite: {fileID: 21300000, guid: 60b4b8c693fbb2d419e2331a1022a56b, type: 3}
     sentences:
-    - WAAgh!!!!
+    - Or i will beat you!
+  - name: Bandit
+    isEnemy: 1
+    portraite: {fileID: 21300000, guid: d8346fc2db87d8b46bbfe4e214bcedf9, type: 3}
+    sentences:
+    - Hmm...
+    - Try it!

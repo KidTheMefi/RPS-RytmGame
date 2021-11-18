@@ -22,11 +22,12 @@ public class RytmGameService : MonoBehaviour
     [SerializeField] private Slider playerHP;
     [SerializeField] private Slider enemyHP;
     [SerializeField] private DamageShow damageShow;
+    [SerializeField] private SpriteRenderer gameBackground; 
 
     [SerializeField] private Animator playerAnimator;
     [SerializeField] private BloodParticleFabric bloodParticle;
 
-    [SerializeField] private EnemyModel enemyModel;
+    private EnemyModel enemyModel;
 
     private PointsCounter pointsCounter;
 
@@ -102,16 +103,19 @@ public class RytmGameService : MonoBehaviour
             Destroy(enemyModel.gameObject);
         }
 
-            if (enemyList[lvl].enemyCharacterPrefab != null)
+        if (enemyList[lvl].enemyCharacterPrefab != null)
         {
             enemyModel = Instantiate(enemyList[lvl].enemyCharacterPrefab, gameObject.transform);
         }
 
-
-
         if (enemyList[lvl].dialogue != null)
         {
             EnemyHasDialogue(enemyList[lvl].dialogue);
+        }
+
+        if (enemyList[lvl].enemyBackground != null)
+        {
+            gameBackground.sprite = enemyList[lvl].enemyBackground;
         }
 
         StopAllCoroutines();
@@ -145,9 +149,10 @@ public class RytmGameService : MonoBehaviour
 
     private IEnumerator StartGame()
     {
+        yield return new WaitForSeconds(0.1f);
         gameStateMachine = GameState.gameOn;
         pointsCounter.StartCounting(enemyList[curentLvl].HP);
-        yield return new WaitForSeconds(0.1f);
+        
         if (enemyList.Count > 0)
         {
             railScript.LevelStart(enemyList[curentLvl]);
@@ -169,9 +174,12 @@ public class RytmGameService : MonoBehaviour
 
     private void WrongTiming()
     {
-        pointsCounter.AddPoints(CompareResult.Lose);
-        playerAnimator.SetTrigger("Damage");
-        ChangePlayerHP(-1);
+        if (gameStateMachine == GameState.gameOn)
+        {
+            pointsCounter.AddPoints(CompareResult.Lose);
+            playerAnimator.SetTrigger("Damage");
+            ChangePlayerHP(-1);
+        }
     }
 
     public void ButtonPressed(IconBaseClass playerChoise)
@@ -226,6 +234,11 @@ public class RytmGameService : MonoBehaviour
 
     private void ChangePlayerHP(int change)
     {
+        if (enemyModel != null)
+        {
+            enemyModel.AnimationSetTrigger("Attack");
+        }
+
         bloodParticle.CreateBlood();
         damageShow.DamageDeal();
         playerHP.value += change;

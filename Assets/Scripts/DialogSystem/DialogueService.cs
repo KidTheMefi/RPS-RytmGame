@@ -8,13 +8,14 @@ using System;
 public class DialogueService : MonoBehaviour
 {
 
-    [SerializeField] private TextMeshProUGUI nameText;  
-    [SerializeField] private TextMeshProUGUI dialogueText; 
-    [SerializeField] private Image portrait;
+    [SerializeField] private TextMeshProUGUI nameText;
+    [SerializeField] private TextMeshProUGUI dialogueText;
+    [SerializeField] private Image yourPortrait;
+    [SerializeField] private Image enemyPortrait;
 
-    [SerializeField] private Dialogue testDialogue; 
+    [SerializeField] private Dialogue testDialogue;
 
-    private Queue<Speach> speachQueue = new Queue<Speach>(); 
+    private Queue<Speach> speachQueue = new Queue<Speach>();
     private Queue<string> sentences = new Queue<string>();
 
     public event Action DialogueEnded = delegate { };
@@ -25,13 +26,13 @@ public class DialogueService : MonoBehaviour
         //StartDialogue(testDialogue);
     }
 
-   public void StartDialogue (Dialogue dialogue)
+    public void StartDialogue(Dialogue dialogue)
     {
-        if (speachQueue != null )
+        if (speachQueue != null)
         {
             speachQueue.Clear();
         }
-        
+
         foreach (Speach speach in dialogue.speach)
         {
             speachQueue.Enqueue(speach);
@@ -55,8 +56,23 @@ public class DialogueService : MonoBehaviour
         Speach characterSpeach = speachQueue.Dequeue();
 
         nameText.text = characterSpeach.name;
-        portrait.sprite = characterSpeach.portraite;
-        
+
+        if (characterSpeach.isEnemy)
+
+        {
+            yourPortrait.color = new Color32(255, 255, 255, 0);
+            enemyPortrait.color = new Color32(255, 255, 255, 255);
+            enemyPortrait.sprite = characterSpeach.portraite;
+        }
+        else
+        {
+
+            yourPortrait.color = new Color32(255, 255, 255, 255);
+            enemyPortrait.color = new Color32(255, 255, 255, 0);
+            yourPortrait.sprite = characterSpeach.portraite;
+        }
+
+
         foreach (string sentence in characterSpeach.sentences)
         {
             sentences.Enqueue(sentence);

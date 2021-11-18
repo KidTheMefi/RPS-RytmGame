@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Enemy8
   m_EditorClassIdentifier: 
   enemyName: Enemy 8
+  dialogue: {fileID: 0}
   HP: 20
   hasGeneralTimeToReachBottom: 1
-  generalTimeToReachBottom: 1.5
+  generalTimeToReachBottom: 2.2
   bottomBorder: 1
   areaRange: 3
   spawnProperties:
@@ -27,3 +28,5 @@ MonoBehaviour:
     countDown: 1
     idClass: 0300000004000000
     repit: 2
+  enemyCharacterPrefab: {fileID: 0}
+  enemyBackground: {fileID: 0}

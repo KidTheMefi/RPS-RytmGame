@@ -339,7 +339,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boomParticlePrefab: {fileID: 8620287973072333140, guid: 3a68329b6b6cf8f458e48dba9b8c7967, type: 3}
   particleSpriteWin: {fileID: 21300000, guid: 281b47f261275cf41b27710cc5c9b694, type: 3}
-  particleSpriteLose: {fileID: 21300000, guid: 1447b708fe0e45744b8cb74e684912bd, type: 3}
+  particleSpriteLose: {fileID: 21300000, guid: 2496e0a08f537614d82552bd4fdec05c, type: 3}
 --- !u!1 &8492556827371352102
 GameObject:
   m_ObjectHideFlags: 0

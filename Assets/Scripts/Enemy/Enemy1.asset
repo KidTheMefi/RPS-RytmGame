@@ -25,3 +25,4 @@ MonoBehaviour:
     idClass: 010000000000000002000000
     repit: 10
   enemyCharacterPrefab: {fileID: 1659931096873860977, guid: 0d3105e9d015f154180b49c562d04510, type: 3}
+  enemyBackground: {fileID: 21300000, guid: baac36866ff39d1448a4fad2570623b8, type: 3}

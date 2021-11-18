@@ -2,8 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class IconButton : MonoBehaviour
+public class IconButton : MonoBehaviour, IPointerClickHandler
 {   
 
     [SerializeField] private IconBaseClass buttonIcon;
@@ -19,13 +20,15 @@ public class IconButton : MonoBehaviour
     {
         iconButtonSprite = GetComponent<SpriteRenderer>();
     }
-    private void OnMouseDown()
+
+
+    /*private void OnMouseDown()
     {
         StopCoroutine(ChangeButtonColor());
         StartCoroutine(ChangeButtonColor());
 
         ButtonPressed(buttonIcon);
-    }
+    }*/
 
     private IEnumerator ChangeButtonColor()
     {
@@ -34,4 +37,12 @@ public class IconButton : MonoBehaviour
         iconButtonSprite.color = regularColor;
     }
 
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        Debug.Log("click");
+        StopCoroutine(ChangeButtonColor());
+        StartCoroutine(ChangeButtonColor());
+
+        ButtonPressed(buttonIcon);
+    }
 }

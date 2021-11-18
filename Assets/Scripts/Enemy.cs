@@ -15,4 +15,5 @@ public class Enemy : ScriptableObject
     [SerializeField, Range(1, 13)] public float areaRange = 4;
     public List<SpawnProperty> spawnProperties = new List<SpawnProperty>();
     public EnemyModel enemyCharacterPrefab;
+    public Sprite enemyBackground;
 }

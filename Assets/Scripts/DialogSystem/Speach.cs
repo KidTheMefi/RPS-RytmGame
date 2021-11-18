@@ -7,6 +7,7 @@ using UnityEngine;
 public class Speach  
 {
     public string name;
+    public bool isEnemy;
     public Sprite portraite;
     [TextArea(2,5)]
     public string[] sentences;

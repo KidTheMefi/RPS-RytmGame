@@ -19,16 +19,19 @@ public class IconDestoyParticleFabric : MonoBehaviour
             {
                 case CompareResult.Win:
                     boomParticlePrefab.textureSheetAnimation.SetSprite(0, particleSpriteWin);
-                    Instantiate(boomParticlePrefab, toPosition, Quaternion.identity);
+                    //Instantiate(boomParticlePrefab, toPosition, Quaternion.identity);
                     break;
                 case CompareResult.Draw:
-                    goto case CompareResult.Win;                 
+                    boomParticlePrefab.textureSheetAnimation.SetSprite(0, particleSpriteLose);
+                    break;
+                //goto case CompareResult.Win;                 
                 case CompareResult.Lose:
                     //boomParticlePrefab.textureSheetAnimation.SetSprite(0, particleSpriteLose);
-                    break;
+                    return;
             }
-            
-           
+            Instantiate(boomParticlePrefab, toPosition, Quaternion.identity);
+
+
         }
     }
 }
