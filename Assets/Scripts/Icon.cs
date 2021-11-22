@@ -23,7 +23,15 @@ public enum IconSpawnIdClass
     InvertedArrow,
     RhythmSword,
     RhytmShield,
-    RhytmArrow
+    RhytmArrow,
+    SwordBlue,
+    SwordGreen,
+    ShieldBlue,
+    ShieldRed,
+    ArrowRed,
+    ArrowGreen
+
+
 }
 
 public enum CompareResult

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62cffce5e325b224eba9a2ff8dc9a47a, type: 3}
+  m_Name: Enemy14
+  m_EditorClassIdentifier: 
+  enemyName: Enemy14
+  dialogue: {fileID: 0}
+  HP: 40
+  hasGeneralTimeToReachBottom: 1
+  generalTimeToReachBottom: 2.5
+  bottomBorder: 2.18
+  areaRange: 5.95
+  spawnProperties:
+  - timeToReachBottom: 0.4
+    countDown: 0.8
+    idClass: 000000000100000002000000030000000400000005000000090000000a0000000b000000
+    repit: 5
+  enemyCharacterPrefab: {fileID: 0}
+  enemyBackground: {fileID: 0}
+  enemyAttack: {fileID: 0}
+  enemyHitSounds: []

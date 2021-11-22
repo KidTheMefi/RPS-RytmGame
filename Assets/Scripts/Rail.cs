@@ -24,7 +24,7 @@ public class Rail : MonoBehaviour
 
     public event Action IconReachBottom = delegate { };
     public event Action NoIconInArea = delegate { };
-    public event Action<CompareResult> ResultsChecked = delegate { };
+    public event Action<CompareResult, IconBaseClass> ResultsChecked = delegate { };
 
 
     private void Awake()
@@ -139,7 +139,7 @@ public class Rail : MonoBehaviour
             Vector3 iconPosition = targetIconMove.Icon.gameObject.GetComponent<Transform>().position;
             iconDestoyParticleFabric.CreateBlast(iconPosition, targetIconMove.Icon.Compare(playerIcon));
 
-            ResultsChecked(targetIconMove.Icon.Compare(playerIcon));
+            ResultsChecked(targetIconMove.Icon.Compare(playerIcon), playerIcon);
             DestroyIconMove(targetIconMove);
         }
         else

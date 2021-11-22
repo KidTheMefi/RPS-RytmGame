@@ -15,7 +15,7 @@ public class IconFabric : MonoBehaviour
         {
             return Instantiate(iconPull.Find(op => op.iconSpawnClass == idClass), gameObject.transform);
         }
-        else Debug.LogWarning("No objects in IconFabric!");
+        else Debug.LogWarning("No such object in IconFabric!");
         return null;
     }
 

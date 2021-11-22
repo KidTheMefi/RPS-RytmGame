@@ -27,6 +27,8 @@ public class RytmGameService : MonoBehaviour
     [SerializeField] private Animator playerAnimator;
     [SerializeField] private BloodParticleFabric bloodParticle;
 
+    //[SerializeField] private AudioManager audioManager;
+
     private EnemyModel enemyModel;
 
     private PointsCounter pointsCounter;
@@ -41,7 +43,7 @@ public class RytmGameService : MonoBehaviour
     public event LevelEnded PlayerWin;
     public event LevelEnded PlayerLose;
 
-    public int playerMaxHP;
+    [SerializeField] private int playerMaxHP;
     private int curentLvl;
 
     [SerializeField] private IconButtonService iconButtonService;
@@ -78,7 +80,8 @@ public class RytmGameService : MonoBehaviour
 
     public void StartLevel(int lvl)
     {
-
+        AudioManager.Singleton.PlayCombatMusic();
+         
         railScript.StopAndClearRail();
 
         if (lvl >= enemyList.Count)
@@ -89,6 +92,8 @@ public class RytmGameService : MonoBehaviour
 
         curentLvl = lvl;
         enemySpawnProperties = enemyList[curentLvl].spawnProperties;
+
+        AudioManager.Singleton.SetEnemySounds(enemyList[curentLvl].enemyAttack, enemyList[curentLvl].enemyHitSounds);
 
         railScript.ClickAreaSetup(enemyList[curentLvl].bottomBorder, enemyList[curentLvl].areaRange);
 
@@ -184,11 +189,7 @@ public class RytmGameService : MonoBehaviour
 
     public void ButtonPressed(IconBaseClass playerChoise)
     {
-        if (gameStateMachine == GameState.gameOn)
-        {
-            PlayerAnimationPlay(playerChoise);
             railScript.AreaCheck(playerChoise);
-        }
     }
 
     private void PlayerAnimationPlay(IconBaseClass playerIcon)
@@ -212,13 +213,15 @@ public class RytmGameService : MonoBehaviour
     }
 
 
-    private void ResultsApply(CompareResult compareResult)
+    private void ResultsApply(CompareResult compareResult, IconBaseClass playerChoise)
     {
         pointsCounter.AddPoints(compareResult);
 
         switch (compareResult)
         {
             case CompareResult.Win:
+                PlayerAnimationPlay(playerChoise);
+                AudioManager.Singleton.PlayPlayerAttackSound(playerChoise);
                 ChangeEnemyHP(-1);
                 break;
             case CompareResult.Lose:
@@ -238,7 +241,7 @@ public class RytmGameService : MonoBehaviour
         {
             enemyModel.AnimationSetTrigger("Attack");
         }
-
+        AudioManager.Singleton.PlayEnemyAttackSound();
         bloodParticle.CreateBlood();
         damageShow.DamageDeal();
         playerHP.value += change;
@@ -265,6 +268,7 @@ public class RytmGameService : MonoBehaviour
 
     private void DrawSituation()
     {
+        AudioManager.Singleton.PlayDrawSound();
     }
 
     private void WinGame()

@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class LevelMenu : MonoBehaviour
 {
-    /*[SerializeField]*/
+    
     private LevelPoint[] levelPoints;
 
     [SerializeField] private Transform pointer;
@@ -17,7 +17,6 @@ public class LevelMenu : MonoBehaviour
     public event Action BackToMainMenuEvent = delegate { }; 
 
     private int[] currentLevelStarArray;
-
     private int selectedLevel = 0;
 
     private void OnDestroy()
@@ -30,17 +29,23 @@ public class LevelMenu : MonoBehaviour
 
     private void LevelSelected(int selectedLevel, Vector3 selectedLevelPosition)
     {
+        
         pointer.position = selectedLevelPosition;
         enemyPropertieDisplay.ShowEnemyStats(selectedLevel);
-        starsDisplay.StarResults(currentLevelStarArray[selectedLevel]);       
+        starsDisplay.StarResults(currentLevelStarArray[selectedLevel]);
+
+        if (this.selectedLevel != selectedLevel)
+        {
+            AudioManager.Singleton.PlayClickSound();
+        }
         this.selectedLevel = selectedLevel;
+      
     }
 
     public void SetUpLevelMenu(int[] array)
     {
         currentLevelStarArray = array;
         UpdateLevelMenu();
-
     }
 
     private void UpdateLevelMenu()

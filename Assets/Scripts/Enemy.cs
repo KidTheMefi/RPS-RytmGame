@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[CreateAssetMenu(fileName ="New Enemy", menuName = "Enemy")]
+[CreateAssetMenu(fileName = "New Enemy", menuName = "Enemy")]
 public class Enemy : ScriptableObject
 {
-    public string enemyName = "default name";
+    public string enemyName  = "default name" ;
     public Dialogue dialogue;
     public int HP = 10;
     public bool hasGeneralTimeToReachBottom = false;
@@ -16,4 +16,6 @@ public class Enemy : ScriptableObject
     public List<SpawnProperty> spawnProperties = new List<SpawnProperty>();
     public EnemyModel enemyCharacterPrefab;
     public Sprite enemyBackground;
+    public AudioClip enemyAttack;
+    public AudioClip[] enemyHitSounds;
 }

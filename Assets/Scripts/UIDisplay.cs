@@ -8,39 +8,31 @@ using System;
 public class UIDisplay : MonoBehaviour
 {
     [SerializeField] private GameObject LevelCompletePanel;
-    [SerializeField] private LevelCompleteDisplay levelCompleteDisplay;
     [SerializeField] private GameObject LevelLosePanel;
-    [SerializeField] private RytmGameService rytmGameService;
-  
-    //[SerializeField] private LevelPropertiesDisplay levelSelectionDisplay;
-    //[SerializeField] private LevelCompleteDisplay selectedLevelStarsDisplay;
     [SerializeField] private GameObject LoadingPanel;
     [SerializeField] private GameObject MainMenuPanel;
 
+    [SerializeField] private LevelCompleteDisplay levelCompleteDisplay;
+
+    [SerializeField] private RytmGameService rytmGameService;
     [SerializeField] private DialogueService dialogueService;
 
-   [SerializeField] private LevelMenu levelSelectMenuPrefab;
+    [SerializeField] private LevelMenu levelSelectMenuPrefab;
     private LevelMenu levelSelectMenu;
 
-
     [SerializeField] private Canvas uiDisplayCanvas;
-    [SerializeField] private Canvas gameCanvas;  
+    [SerializeField] private Canvas gameCanvas;
 
     private CompletedLevelData completedLevelData = new CompletedLevelData();
-    //private SaveLoadStars saveLoadStars = new SaveLoadStars();
+
     [SerializeField] private PlayFabScript playFabScript;
 
+  
 
     private void Start()
     {
 
-
-        //saveLoadStars.SetUp(rytmGameService.enemies.enemyList.Count);
         completedLevelData.SetLevelsArrayLenght(rytmGameService.enemies.enemyList.Count);
-        //playFabScript.GetCompletedLevelData();
-
-
-
 
         completedLevelData.CompletedLevelDataReady += LoadingEnded;
         completedLevelData.SaveCompleteLevelData += SaveCompletedLevelData;
@@ -48,7 +40,6 @@ public class UIDisplay : MonoBehaviour
         playFabScript.NoCompletedLevelData += SetUpNewComletedLevelData;
 
         rytmGameService.LevelCompleteResults += SetStarsResult;
-        //rytmGameService.PlayerWin += AvailableLevelUpdate;
         rytmGameService.PlayerWin += OpenLevelCompleteMenu;
         rytmGameService.PlayerLose += OpenLevelLoseMenu;
         rytmGameService.EnemyHasDialogue += OpenDialogue;
@@ -97,8 +88,9 @@ public class UIDisplay : MonoBehaviour
 
     public void StartLevel(int sl)
     {
+        AudioManager.Singleton.PlayClickSound();
         gameCanvas.enabled = true;
-        uiDisplayCanvas.enabled = true; 
+        uiDisplayCanvas.enabled = true;
         Resume();
         rytmGameService.StartLevel(sl);
     }
@@ -106,21 +98,22 @@ public class UIDisplay : MonoBehaviour
 
     public void ResetLevels()
     {
-
+        AudioManager.Singleton.PlayClickSound();
         completedLevelData.ResetLevels();
         PlayerPrefs.SetInt("LevelUnlocked", 0);
-  
+
     }
 
     public void OpenAllLevels()
     {
+        AudioManager.Singleton.PlayClickSound();
         PlayerPrefs.SetInt("LevelUnlocked", rytmGameService.enemies.enemyList.Count - 1);
     }
 
     private void SetStarsResult(int level, int stars)
     {
         completedLevelData.SetStarsResult(level, stars);
-        
+
 
         levelCompleteDisplay.StarResults(stars);
     }
@@ -140,12 +133,15 @@ public class UIDisplay : MonoBehaviour
 
     public void Pause()
     {
+        
+        //audioManager.PlayClickSound();
         rytmGameService.gameStateMachine = GameState.pauze;
         Time.timeScale = 0f;
     }
 
     public void Resume()
     {
+        AudioManager.Singleton.PlayClickSound();
         rytmGameService.gameStateMachine = GameState.gameOn;
         Time.timeScale = 1f;
     }
@@ -157,17 +153,20 @@ public class UIDisplay : MonoBehaviour
     }
 
     public void OpenLevelMenu()
-    {     
+    {
         if (levelSelectMenu != null)
         {
             Destroy(levelSelectMenu);
         }
 
+        AudioManager.Singleton.PlayMenuMusic();
+        AudioManager.Singleton.PlayClickSound();
+
         levelSelectMenu = Instantiate(levelSelectMenuPrefab);
         levelSelectMenu.SetUpLevelMenu(completedLevelData.currentLevelStarArray);
         levelSelectMenu.StartSelectedLevel += StartLevel;
         levelSelectMenu.BackToMainMenuEvent += BackToMainMenu;
-        //gameDisplay
+
         uiDisplayCanvas.enabled = false;
         gameCanvas.enabled = false;
         Pause();
@@ -176,6 +175,8 @@ public class UIDisplay : MonoBehaviour
 
     public void BackToMainMenu()
     {
+        AudioManager.Singleton.PlayClickSound();
+        AudioManager.Singleton.PlayMenuMusic();
         uiDisplayCanvas.enabled = true;
         MainMenuPanel.SetActive(true);
     }
@@ -188,4 +189,8 @@ public class UIDisplay : MonoBehaviour
 
     }
 
+    public void ChangeSound()
+    {
+        AudioManager.Singleton.ChangeSound();
+    }
 }
