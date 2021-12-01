@@ -127,6 +127,7 @@ public class UIDisplay : MonoBehaviour
 
     private void OpenLevelLoseMenu()
     {
+        AudioManager.Singleton.PlayLoseMusic();
         LevelLosePanel.SetActive(true);
         Pause();
     }

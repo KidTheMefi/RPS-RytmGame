@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62cffce5e325b224eba9a2ff8dc9a47a, type: 3}
   m_Name: Enemy8
   m_EditorClassIdentifier: 
-  enemyName: Enemy 8
+  enemyName: Zombie Peasant
   dialogue: {fileID: 0}
   HP: 20
+  ability: 0
   hasGeneralTimeToReachBottom: 1
   generalTimeToReachBottom: 2.4
   bottomBorder: 1
@@ -28,7 +29,7 @@ MonoBehaviour:
     countDown: 1
     idClass: 0300000004000000
     repit: 2
-  enemyCharacterPrefab: {fileID: 0}
-  enemyBackground: {fileID: 0}
-  enemyAttack: {fileID: 0}
+  enemyCharacterPrefab: {fileID: 8705786636996270300, guid: 650967d33f8ec15498f416366256427b, type: 3}
+  enemyBackground: {fileID: 21300000, guid: 6531f2db1d4275d44ae119653d47af92, type: 3}
+  enemyAttackSounds: {fileID: 0}
   enemyHitSounds: []

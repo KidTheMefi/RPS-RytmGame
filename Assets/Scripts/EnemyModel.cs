@@ -20,10 +20,11 @@ public class EnemyModel : MonoBehaviour
 
     public void AnimationSetTrigger(string trigger)
     {
+        
         EnemyAnimator.SetTrigger(trigger);
     }
 
-    public void playBloodParticle()
+    public void PlayBloodParticle()
     {
         bloodParticle.CreateBlood();
     }

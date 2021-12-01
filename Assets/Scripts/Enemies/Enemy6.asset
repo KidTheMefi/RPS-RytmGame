@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62cffce5e325b224eba9a2ff8dc9a47a, type: 3}
   m_Name: Enemy6
   m_EditorClassIdentifier: 
-  enemyName: Enemy 6
+  enemyName: Zombie Peasant
   dialogue: {fileID: 0}
   HP: 15
+  ability: 0
   hasGeneralTimeToReachBottom: 1
   generalTimeToReachBottom: 4
   bottomBorder: 0
@@ -26,7 +27,7 @@ MonoBehaviour:
     repit: 5
   enemyCharacterPrefab: {fileID: 8705786636996270300, guid: 650967d33f8ec15498f416366256427b, type: 3}
   enemyBackground: {fileID: 21300000, guid: 6531f2db1d4275d44ae119653d47af92, type: 3}
-  enemyAttack: {fileID: 0}
+  enemyAttackSounds: {fileID: 0}
   enemyHitSounds:
   - {fileID: 8300000, guid: a9809ad0713070c41a422630a585658c, type: 3}
   - {fileID: 8300000, guid: 80a899454c0cbdf47a687f3869cfc273, type: 3}

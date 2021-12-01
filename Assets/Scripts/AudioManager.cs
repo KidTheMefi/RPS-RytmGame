@@ -35,7 +35,9 @@ public class AudioManager : MonoBehaviour
 
     [SerializeField] private AudioClip combatMusic;
     [SerializeField] private AudioClip mainMenuMusic;
-
+    [SerializeField] private AudioClip loseMusic;
+    [SerializeField] private AudioClip wellDoneSound;
+    [SerializeField] private AudioClip winSound; 
     [SerializeField] private AudioClip drawSound;
     [SerializeField] private AudioClip clickUI;
 
@@ -87,6 +89,12 @@ public class AudioManager : MonoBehaviour
         backgroundMusic.Play();
     }
 
+    public void PlayLoseMusic()
+    {
+        backgroundMusic.clip = loseMusic;
+        backgroundMusic.Play();
+    }
+
     public void SetEnemySounds(AudioClip attack, AudioClip[] hit)
     {
         enemyAttackSound = attack;
@@ -94,10 +102,22 @@ public class AudioManager : MonoBehaviour
     }
 
 
+    public void PlayWinGameSound()
+    {
+        backgroundMusic.clip = winSound;
+        backgroundMusic.Play();
+    }
+
+    public void Play3StarWinSound()
+    {
+        playerSoundEffect.clip = wellDoneSound;
+        playerSoundEffect.Play();
+    }
+
     public void PlayDrawSound()
     {
-        playerSoundEffect.clip = drawSound;
-        playerSoundEffect.Play();
+        enemySoundEffect.clip = drawSound;
+        enemySoundEffect.Play();
     }
 
     public void PlayPlayerAttackSound(IconBaseClass playerAttack)

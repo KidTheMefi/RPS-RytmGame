@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62cffce5e325b224eba9a2ff8dc9a47a, type: 3}
   m_Name: Enemy2
   m_EditorClassIdentifier: 
-  enemyName: Enemy 2
+  enemyName: Bandit
   dialogue: {fileID: 0}
   HP: 15
+  ability: 0
   hasGeneralTimeToReachBottom: 1
   generalTimeToReachBottom: 4
   bottomBorder: 0
@@ -24,5 +25,7 @@ MonoBehaviour:
     countDown: 1
     idClass: 000000000100000002000000
     repit: 3
-  enemyCharacterPrefab: {fileID: 1659931096873860977, guid: 0d3105e9d015f154180b49c562d04510, type: 3}
+  enemyCharacterPrefab: {fileID: 8354594182302946521, guid: ef1185463eb345147afc5d436d3c07cc, type: 3}
   enemyBackground: {fileID: 21300000, guid: baac36866ff39d1448a4fad2570623b8, type: 3}
+  enemyAttackSounds: {fileID: 0}
+  enemyHitSounds: []

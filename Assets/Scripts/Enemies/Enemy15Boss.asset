@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62cffce5e325b224eba9a2ff8dc9a47a, type: 3}
   m_Name: Enemy15Boss
   m_EditorClassIdentifier: 
-  enemyName: Enemy15Boss
-  dialogue: {fileID: 0}
+  enemyName: Swamp Beast
+  dialogue: {fileID: 11400000, guid: d9d4c1641daa7524f898d520d2b409a7, type: 2}
   HP: 50
+  ability: 0
   hasGeneralTimeToReachBottom: 0
   generalTimeToReachBottom: 3
   bottomBorder: 0
@@ -40,7 +41,11 @@ MonoBehaviour:
     countDown: 1
     idClass: 0200000008000000
     repit: 3
-  enemyCharacterPrefab: {fileID: 0}
-  enemyBackground: {fileID: 0}
-  enemyAttack: {fileID: 0}
-  enemyHitSounds: []
+  enemyCharacterPrefab: {fileID: 4588922668576777766, guid: fa91e835cdbefb84d8980a7891830016, type: 3}
+  enemyBackground: {fileID: 21300000, guid: 6c7fe865ccb21b04ebda9ad4b172e3c0, type: 3}
+  enemyAttackSounds: {fileID: 0}
+  enemyHitSounds:
+  - {fileID: 8300000, guid: 20463a7ce18d36f4d803e097a85a6fe1, type: 3}
+  - {fileID: 8300000, guid: 24061001dff23ec478b84d6408eee39f, type: 3}
+  - {fileID: 8300000, guid: dc2ad6724a84a8d41ac7dcb1f9f614af, type: 3}
+  - {fileID: 8300000, guid: 73e9805f133c4b74393eb2aebfa0a3af, type: 3}

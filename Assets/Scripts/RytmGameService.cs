@@ -12,7 +12,6 @@ public enum GameState
 public class RytmGameService : MonoBehaviour
 {
     [SerializeField] private GameObject railPrefab;
-    public List<SpawnProperty> enemySpawnProperties = new List<SpawnProperty>();
 
     [SerializeField] private List<Enemy> enemyList;
 
@@ -25,9 +24,8 @@ public class RytmGameService : MonoBehaviour
     [SerializeField] private SpriteRenderer gameBackground; 
 
     [SerializeField] private Animator playerAnimator;
-    [SerializeField] private BloodParticleFabric bloodParticle;
-
-    //[SerializeField] private AudioManager audioManager;
+    [SerializeField] private BloodParticleFabric playerBloodFabric;
+    [SerializeField] private ParticleSystem fireworkParticle;
 
     private EnemyModel enemyModel;
 
@@ -46,15 +44,16 @@ public class RytmGameService : MonoBehaviour
     [SerializeField] private int playerMaxHP;
     private int curentLvl;
 
-    [SerializeField] private IconButtonService iconButtonService;
+    [SerializeField] private IconButtonService iconButtonServicePrefab;
+    private IconButtonService iconButtonService;
 
     void Start()
     {
         railPrefab = Instantiate(railPrefab, Vector3.up * -10, Quaternion.identity);
         railScript = railPrefab.GetComponent<Rail>();
 
-        iconButtonService = Instantiate(iconButtonService, gameObject.transform);
 
+        InstatiateIconButtonService();
         pointsCounter = GetComponent<PointsCounter>();
 
         enemyHP = Instantiate(enemyHP, gameCanvas.transform);
@@ -62,8 +61,7 @@ public class RytmGameService : MonoBehaviour
 
         enemyList = enemies.enemyList;
 
-
-        iconButtonService.ButtonPressed += ButtonPressed;
+        railScript.NewAttackWave += NewAttackWave;
         railScript.IconReachBottom += IconReachBottom;
         railScript.ResultsChecked += ResultsApply;
         railScript.NoIconInArea += WrongTiming;
@@ -75,25 +73,37 @@ public class RytmGameService : MonoBehaviour
         railScript.IconReachBottom -= IconReachBottom;
         railScript.ResultsChecked -= ResultsApply;
         railScript.NoIconInArea -= WrongTiming;
+        railScript.NewAttackWave -= NewAttackWave;
     }
 
 
+    private void InstatiateIconButtonService()
+    {
+        if (iconButtonService != null)
+        {
+            Destroy(iconButtonService.gameObject);
+        }
+        iconButtonService = Instantiate(iconButtonServicePrefab, gameObject.transform);
+        iconButtonService.ButtonPressed += ButtonPressed;
+
+    }
+
     public void StartLevel(int lvl)
     {
-        AudioManager.Singleton.PlayCombatMusic();
-         
-        railScript.StopAndClearRail();
-
         if (lvl >= enemyList.Count)
         {
             Debug.LogWarning("Wrong start Lvl int!");
             return;
         }
 
-        curentLvl = lvl;
-        enemySpawnProperties = enemyList[curentLvl].spawnProperties;
+        InstatiateIconButtonService();
 
-        AudioManager.Singleton.SetEnemySounds(enemyList[curentLvl].enemyAttack, enemyList[curentLvl].enemyHitSounds);
+       
+        railScript.StopAndClearRail();
+
+        curentLvl = lvl;
+
+        AudioManager.Singleton.SetEnemySounds(enemyList[curentLvl].enemyAttackSounds, enemyList[curentLvl].enemyHitSounds);
 
         railScript.ClickAreaSetup(enemyList[curentLvl].bottomBorder, enemyList[curentLvl].areaRange);
 
@@ -145,6 +155,9 @@ public class RytmGameService : MonoBehaviour
     {
 
         railScript.StopAndClearRail();
+
+        InstatiateIconButtonService();
+
         playerHP.value = playerMaxHP;
         enemyHP.value = enemyHP.maxValue;
 
@@ -154,6 +167,7 @@ public class RytmGameService : MonoBehaviour
 
     private IEnumerator StartGame()
     {
+        AudioManager.Singleton.PlayCombatMusic();
         yield return new WaitForSeconds(0.1f);
         gameStateMachine = GameState.gameOn;
         pointsCounter.StartCounting(enemyList[curentLvl].HP);
@@ -165,7 +179,19 @@ public class RytmGameService : MonoBehaviour
         else Debug.LogWarning("No enemy in the List");
     }
 
+    private void NewAttackWave()
+    {
+        switch (enemyList[curentLvl].ability)
+        {
+            case EnemySpecialAbility.changeButtonsPosition:
+                iconButtonService.MoveIconButtons();
+                enemyModel.AnimationSetTrigger("SpecAttack");
+                break;
+            default:
+                return;
+        }
 
+    }
 
     private void IconReachBottom()
     {
@@ -183,7 +209,7 @@ public class RytmGameService : MonoBehaviour
         {
             pointsCounter.AddPoints(CompareResult.Lose);
             playerAnimator.SetTrigger("Damage");
-            ChangePlayerHP(-1);
+            ChangePlayerHP(-1);          
         }
     }
 
@@ -242,7 +268,7 @@ public class RytmGameService : MonoBehaviour
             enemyModel.AnimationSetTrigger("Attack");
         }
         AudioManager.Singleton.PlayEnemyAttackSound();
-        bloodParticle.CreateBlood();
+        playerBloodFabric.CreateBlood();
         damageShow.DamageDeal();
         playerHP.value += change;
         if (playerHP.value <= 0)
@@ -256,7 +282,7 @@ public class RytmGameService : MonoBehaviour
         if (enemyModel != null)
         {
             enemyModel.AnimationSetTrigger("Damage");
-            enemyModel.playBloodParticle();
+            enemyModel.PlayBloodParticle();
         }
 
         enemyHP.value += change;
@@ -282,8 +308,10 @@ public class RytmGameService : MonoBehaviour
 
 
         //Debug.Log(pointsCounter.GetPointsStarResult());
-        LevelCompleteResults(curentLvl, pointsCounter.GetPointsStarResult());
+        fireworkParticle.Play();
+        
         PlayerWin();
+        LevelCompleteResults(curentLvl, pointsCounter.GetPointsStarResult());
         gameStateMachine = GameState.pauze;
         Debug.Log("Player Win!");
 

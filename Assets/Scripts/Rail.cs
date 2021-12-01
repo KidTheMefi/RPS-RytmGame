@@ -24,6 +24,7 @@ public class Rail : MonoBehaviour
 
     public event Action IconReachBottom = delegate { };
     public event Action NoIconInArea = delegate { };
+    public event Action NewAttackWave = delegate { }; 
     public event Action<CompareResult, IconBaseClass> ResultsChecked = delegate { };
 
 
@@ -54,6 +55,7 @@ public class Rail : MonoBehaviour
 
     private void NextWave()
     {
+        NewAttackWave();
         wave++;
         if (wave >= enemySpawnProperties.Count)
         {
